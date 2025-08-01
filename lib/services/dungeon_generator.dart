@@ -253,9 +253,10 @@ class DungeonGenerator {
     final col10Roll = DiceRoller.roll(2, 6);
     final col11Roll = DiceRoller.roll(2, 6);
     final col12Roll = DiceRoller.roll(2, 6);
-    final col13Roll = DiceRoller.roll(2, 6);
-    final col14Roll = DiceRoller.roll(2, 6);
-    final col15Roll = DiceRoller.roll(2, 6);
+    // Aplica modificadores para tesouros conforme regra: +1 para armadilhas, +2 para monstros
+    int col13Roll = DiceRoller.roll(2, 6);
+    int col14Roll = DiceRoller.roll(2, 6);
+    int col15Roll = DiceRoller.roll(2, 6);
 
     // Determina o tipo de sala baseado na coluna 1
     String type;
@@ -272,6 +273,22 @@ class DungeonGenerator {
     } else {
       type = 'Sala Armadilha Especial (coluna 12)';
     }
+
+    // Aplica modificadores de tesouro conforme regra
+    if (type.contains('Armadilha')) {
+      col13Roll += 1;
+      col14Roll += 1;
+      col15Roll += 1;
+    } else if (type.contains('Encontro')) {
+      col13Roll += 2;
+      col14Roll += 2;
+      col15Roll += 2;
+    }
+
+    // Garante que os valores não ultrapassem 12 (máximo de 2d6)
+    col13Roll = col13Roll.clamp(2, 12);
+    col14Roll = col14Roll.clamp(2, 12);
+    col15Roll = col15Roll.clamp(2, 12);
 
     // Resolve referências de colunas no tipo
     type = _resolveColumnReference(type, col7Roll, col8Roll, col9Roll,

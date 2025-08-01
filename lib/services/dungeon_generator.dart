@@ -80,6 +80,164 @@ class DungeonGenerator {
 
   //////////////// PRIVATE ////////////////
 
+  /// Resolve referências de colunas como "(coluna 7)" fazendo nova rolagem
+  String _resolveColumnReference(
+      String text,
+      int col7Roll,
+      int col8Roll,
+      int col9Roll,
+      int col10Roll,
+      int col11Roll,
+      int col12Roll,
+      int col13Roll,
+      int col14Roll,
+      int col15Roll) {
+    if (text.contains('(coluna 7)')) {
+      final col7Result = _getCol7Result(col7Roll);
+      // Se o resultado contém "Especial…", resolve recursivamente
+      if (col7Result.contains('Especial…')) {
+        final resolvedSpecial = _resolveSpecialReference(col8Roll, col9Roll);
+        return text.replaceAll('(coluna 7)', resolvedSpecial);
+      }
+      return text.replaceAll('(coluna 7)', col7Result);
+    }
+    if (text.contains('(coluna 8)')) {
+      final col8Result = _getCol8Result(col8Roll);
+      // Se o resultado contém "Especial 2…", resolve recursivamente
+      if (col8Result.contains('Especial 2…')) {
+        final resolvedSpecial2 = _getCol9Result(col9Roll);
+        return text.replaceAll('(coluna 8)', resolvedSpecial2);
+      }
+      return text.replaceAll('(coluna 8)', col8Result);
+    }
+    if (text.contains('(coluna 9)')) {
+      return text.replaceAll('(coluna 9)', _getCol9Result(col9Roll));
+    }
+    if (text.contains('(coluna 10)')) {
+      return text.replaceAll('(coluna 10)', _getCol10Result(col10Roll));
+    }
+    if (text.contains('(coluna 11)')) {
+      final col11Result = _getCol11Result(col11Roll);
+      // Se o resultado contém "Armadilha Especial…", resolve recursivamente
+      if (col11Result.contains('Armadilha Especial…')) {
+        final resolvedSpecialTrap = _getCol12Result(col12Roll);
+        return text.replaceAll('(coluna 11)', resolvedSpecialTrap);
+      }
+      return text.replaceAll('(coluna 11)', col11Result);
+    }
+    if (text.contains('(coluna 12)')) {
+      return text.replaceAll('(coluna 12)', _getCol12Result(col12Roll));
+    }
+    if (text.contains('(coluna 13)')) {
+      final col13Result = _getCol13Result(col13Roll);
+      // Se o resultado contém "Tesouro Especial…", resolve recursivamente
+      if (col13Result.contains('Tesouro Especial…')) {
+        final resolvedSpecialTreasure = _getCol14Result(col14Roll);
+        return text.replaceAll('(coluna 13)', resolvedSpecialTreasure);
+      }
+      return text.replaceAll('(coluna 13)', col13Result);
+    }
+    if (text.contains('(coluna 14)')) {
+      return text.replaceAll('(coluna 14)', _getCol14Result(col14Roll));
+    }
+    if (text.contains('(coluna 15)')) {
+      return text.replaceAll('(coluna 15)', _getCol15Result(col15Roll));
+    }
+    return text;
+  }
+
+  /// Resolve referências especiais recursivamente
+  String _resolveSpecialReference(int col8Roll, int col9Roll) {
+    final col8Result = _getCol8Result(col8Roll);
+    if (col8Result.contains('Especial 2…')) {
+      return _getCol9Result(col9Roll);
+    }
+    return col8Result;
+  }
+
+  String _getCol7Result(int roll) {
+    if (roll <= 3) return 'dormitório';
+    if (roll <= 5) return 'depósito geral';
+    if (roll <= 7) return 'Especial…';
+    if (roll <= 9) return 'completamente vazia';
+    if (roll <= 11) return 'despensa de comida';
+    return 'cela de prisão';
+  }
+
+  String _getCol8Result(int roll) {
+    if (roll <= 3) return 'sala de treinamento';
+    if (roll <= 5) return 'refeitório';
+    if (roll <= 7) return 'completamente vazia';
+    if (roll <= 9) return 'Especial 2…';
+    if (roll <= 11) return 'altar religioso';
+    return 'covil abandonado';
+  }
+
+  String _getCol9Result(int roll) {
+    if (roll <= 3) return 'câmara de tortura';
+    if (roll <= 5) return 'câmara de rituais';
+    if (roll <= 7) return 'laboratório mágico';
+    if (roll <= 9) return 'biblioteca';
+    if (roll <= 11) return 'cripta';
+    return 'arsenal';
+  }
+
+  String _getCol10Result(int roll) {
+    if (roll <= 3) return 'Novo Monstro + Ocupante I';
+    if (roll <= 5) return 'Ocupante I + Ocupante II';
+    if (roll <= 7) return 'Ocupante I';
+    if (roll <= 9) return 'Ocupante II';
+    if (roll <= 11) return 'Novo Monstro';
+    return 'Novo Monstro + Ocupante II';
+  }
+
+  String _getCol11Result(int roll) {
+    if (roll <= 3) return 'Guilhotina Oculta';
+    if (roll <= 5) return 'Fosso';
+    if (roll <= 7) return 'Dardos Envenenados';
+    if (roll <= 9) return 'Armadilha Especial…';
+    if (roll <= 11) return 'Bloco que Cai';
+    return 'Spray Ácido';
+  }
+
+  String _getCol12Result(int roll) {
+    if (roll <= 3) return 'Poço de Água';
+    if (roll <= 5) return 'Desmoronamento';
+    if (roll <= 7) return 'Teto Retrátil';
+    if (roll <= 9) return 'Porta Secreta';
+    if (roll <= 11) return 'Alarme';
+    return 'Portal Dimensional';
+  }
+
+  String _getCol13Result(int roll) {
+    if (roll <= 3) return 'Nenhum Tesouro';
+    if (roll <= 5) return 'Nenhum Tesouro';
+    if (roll <= 7) return '1d6 x 100 PP + 1d6 x 10 PO';
+    if (roll <= 9) return '1d6 x 10 PO + 1d4 Gemas';
+    if (roll <= 11) return 'Tesouro Especial…';
+    return 'Item Mágico';
+  }
+
+  String _getCol14Result(int roll) {
+    if (roll <= 3) return 'Jogue Novamente + Item Mágico';
+    if (roll <= 5) return '1d6 x 100 PP + 1d6 x 10 PO + 1d4 Gemas';
+    if (roll <= 7) return '1d10 x 100 PP + 1d6 x 100 PO + 1d4 Gemas';
+    if (roll <= 9)
+      return '1d6 x 1.000 PP + 1d6 x 200 PO + 1d6 Gemas + 1d4 Objetos de Valor';
+    if (roll <= 11)
+      return '1d6 x 1.000 PP + 1d6 x 200 PO + 1d6 Gemas + Item Mágico';
+    return 'Jogue Novamente + Item Mágico';
+  }
+
+  String _getCol15Result(int roll) {
+    if (roll <= 3) return '1 Qualquer';
+    if (roll <= 5) return '1 Qualquer não Arma';
+    if (roll <= 7) return '1 Poção';
+    if (roll <= 9) return '1 Pergaminho';
+    if (roll <= 11) return '1 Arma';
+    return '2 Qualquer';
+  }
+
   Room _generateRoom(int index, int level,
       {String? occupantI, String? occupantII}) {
     // Rola 2d6 para cada coluna da tabela 9.2
@@ -108,12 +266,16 @@ class DungeonGenerator {
     } else if (col1Roll <= 7) {
       type = 'Sala Comum (coluna 7)';
     } else if (col1Roll <= 9) {
-      type = 'Monstro (coluna 10)';
+      type = 'Encontro';
     } else if (col1Roll <= 11) {
       type = 'Sala Comum (coluna 7)';
     } else {
       type = 'Sala Armadilha Especial (coluna 12)';
     }
+
+    // Resolve referências de colunas no tipo
+    type = _resolveColumnReference(type, col7Roll, col8Roll, col9Roll,
+        col10Roll, col11Roll, col12Roll, col13Roll, col14Roll, col15Roll);
 
     // Determina corrente de ar (coluna 2)
     String air;
@@ -206,7 +368,13 @@ class DungeonGenerator {
       } else if (col7Roll <= 5) {
         roomCommon = 'depósito geral';
       } else if (col7Roll <= 7) {
-        roomCommon = 'Especial…';
+        // Se caiu "Especial…", resolve recursivamente
+        final col8Result = _getCol8Result(col8Roll);
+        if (col8Result.contains('Especial 2…')) {
+          roomCommon = _getCol9Result(col9Roll);
+        } else {
+          roomCommon = col8Result;
+        }
       } else if (col7Roll <= 9) {
         roomCommon = 'completamente vazia';
       } else if (col7Roll <= 11) {
@@ -226,7 +394,8 @@ class DungeonGenerator {
       } else if (col8Roll <= 7) {
         roomSpecial = 'completamente vazia';
       } else if (col8Roll <= 9) {
-        roomSpecial = 'Especial 2…';
+        // Se caiu "Especial 2…", resolve recursivamente
+        roomSpecial = _getCol9Result(col9Roll);
       } else if (col8Roll <= 11) {
         roomSpecial = 'altar religioso';
       } else {
@@ -255,7 +424,7 @@ class DungeonGenerator {
     // Determina monstros (coluna 10) - só se tipo indicar
     String monster1 = '';
     String monster2 = '';
-    if (type.contains('Monstro')) {
+    if (type.contains('Encontro')) {
       String monsterResult;
       if (col10Roll <= 3) {
         monsterResult = 'Novo Monstro + Ocupante I';
@@ -305,7 +474,8 @@ class DungeonGenerator {
       } else if (col11Roll <= 7) {
         trap = 'Dardos Envenenados';
       } else if (col11Roll <= 9) {
-        trap = 'Armadilha Especial…';
+        // Se caiu "Armadilha Especial…", resolve recursivamente
+        trap = _getCol12Result(col12Roll);
       } else if (col11Roll <= 11) {
         trap = 'Bloco que Cai';
       } else {

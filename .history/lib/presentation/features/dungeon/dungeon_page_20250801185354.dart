@@ -62,7 +62,7 @@ class _DungeonPageState extends State<DungeonPage> {
   }
 
   void _generate() {
-    final generator = DungeonGeneratorRefactored();
+    final generator = DungeonGenerator();
     _dungeon = generator.generate(
       level: 3,
       theme: 'Recuperar artefato',

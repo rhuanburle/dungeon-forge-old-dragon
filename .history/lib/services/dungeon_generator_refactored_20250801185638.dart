@@ -240,8 +240,7 @@ class DungeonGeneratorRefactored {
 
   /// Obtém o item especial se necessário
   SpecialItem? _getSpecialItem(int col5Roll, int col6Roll) {
-    if (col5Roll != 8 && col5Roll != 9)
-      return null; // Só se coluna 5 indicar (roll 8-9)
+    if (col5Roll != 8 && col5Roll != 9) return null; // Só se coluna 5 indicar (roll 8-9)
     return RoomTable9_2.getColumn6(col6Roll);
   }
 

@@ -124,8 +124,8 @@ void main() {
 
           // Should not contain standalone numbers without units
           expect(result, isNot(matches(r'\b\d+\s*\+')));
-          expect(result, isNot(matches(r'\+\s*\d+\s*\+')));
-          expect(result, isNot(matches(r'^\d+\s*\+')));
+          expect(result, isNot(matches(r'\+\s*\d+\s*\+'))); 
+          expect(result, isNot(matches(r'^\d+\s*\+'))); // Number at start
 
           // Should not contain just a number at the beginning
           expect(result, isNot(matches(r'^\d+\s*\+')));

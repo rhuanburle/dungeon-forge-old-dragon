@@ -387,7 +387,9 @@ enum MagicItem {
 enum DifficultyLevel {
   easy('Fácil', 6), // 1d6
   medium('Mediano', 10), // 1d10
-  challenging('Desafiador', 12); // 1d12
+  challenging('Desafiador', 12), // 1d12
+  custom8('Custom 1d8', 8), // 1d8 para tabelas específicas
+  custom2d6('Custom 2d6', 6); // 2d6 implementado como 2d6 real
 
   const DifficultyLevel(this.description, this.diceSides);
   final String description;
@@ -399,8 +401,8 @@ enum PartyLevel {
   beginners('Iniciantes', '1º a 2º Nível'),
   heroic(
     'Heroicos',
-    '3º a 4º Nível',
-  ), // CORRIGIDO: era 3º a 5º, mas nas tabelas A13 é 3º a 4º
+    '3º a 5º Nível',
+  ), // CORRIGIDO: deve ser 3º a 5º conforme solicitado
   advanced('Avançado', '6º Nível ou Maior');
 
   const PartyLevel(this.description, this.levelRange);

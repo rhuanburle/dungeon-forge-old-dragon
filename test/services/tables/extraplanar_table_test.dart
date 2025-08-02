@@ -13,17 +13,26 @@ void main() {
     });
 
     test('should have correct table properties', () {
-      expect(table.tableName, equals('Tabela A13.10 - Encontros Extraplanares'));
+      expect(
+        table.tableName,
+        equals('Tabela A13.10 - Encontros Extraplanares'),
+      );
       expect(table.description, equals('Tabela de encontros extraplanares'));
       expect(table.columnCount, equals(3));
-      expect(table.difficultyLevel, equals(DifficultyLevel.medium));
+      expect(table.difficultyLevel, equals(DifficultyLevel.custom8));
     });
 
     test('should return correct values for Extraplanar I column', () {
       expect(table.getExtraplanarI(1), equals(MonsterType.imp));
       expect(table.getExtraplanarI(2), equals(MonsterType.traag));
-      expect(table.getExtraplanarI(3), equals(MonsterType.waterElementalLesser));
-      expect(table.getExtraplanarI(4), equals(MonsterType.earthElementalLesser));
+      expect(
+        table.getExtraplanarI(3),
+        equals(MonsterType.waterElementalLesser),
+      );
+      expect(
+        table.getExtraplanarI(4),
+        equals(MonsterType.earthElementalLesser),
+      );
       expect(table.getExtraplanarI(5), equals(MonsterType.airElementalLesser));
       expect(table.getExtraplanarI(6), equals(MonsterType.fireElementalLesser));
       expect(table.getExtraplanarI(7), equals(MonsterType.doppelganger));
@@ -44,18 +53,39 @@ void main() {
     test('should return correct values for Extraplanar III column', () {
       expect(table.getExtraplanarIII(1), equals(MonsterType.invisibleHunter));
       expect(table.getExtraplanarIII(2), equals(MonsterType.efreeti));
-      expect(table.getExtraplanarIII(3), equals(MonsterType.waterElementalGreater));
-      expect(table.getExtraplanarIII(4), equals(MonsterType.earthElementalGreater));
-      expect(table.getExtraplanarIII(5), equals(MonsterType.airElementalGreater));
-      expect(table.getExtraplanarIII(6), equals(MonsterType.fireElementalGreater));
+      expect(
+        table.getExtraplanarIII(3),
+        equals(MonsterType.waterElementalGreater),
+      );
+      expect(
+        table.getExtraplanarIII(4),
+        equals(MonsterType.earthElementalGreater),
+      );
+      expect(
+        table.getExtraplanarIII(5),
+        equals(MonsterType.airElementalGreater),
+      );
+      expect(
+        table.getExtraplanarIII(6),
+        equals(MonsterType.fireElementalGreater),
+      );
       expect(table.getExtraplanarIII(7), equals(MonsterType.shoggoth));
       expect(table.getExtraplanarIII(8), equals(MonsterType.cerberus));
     });
 
     test('should work with getByPartyLevel method', () {
-      expect(table.getByPartyLevel(PartyLevel.beginners, 1), equals(MonsterType.imp));
-      expect(table.getByPartyLevel(PartyLevel.heroic, 1), equals(MonsterType.slenderMan));
-      expect(table.getByPartyLevel(PartyLevel.advanced, 1), equals(MonsterType.invisibleHunter));
+      expect(
+        table.getByPartyLevel(PartyLevel.beginners, 1),
+        equals(MonsterType.imp),
+      );
+      expect(
+        table.getByPartyLevel(PartyLevel.heroic, 1),
+        equals(MonsterType.slenderMan),
+      );
+      expect(
+        table.getByPartyLevel(PartyLevel.advanced, 1),
+        equals(MonsterType.invisibleHunter),
+      );
     });
 
     test('should throw error for invalid roll', () {
@@ -70,7 +100,7 @@ void main() {
       expect(info, contains('Tabela A13.10 - Encontros Extraplanares'));
       expect(info, contains('Tabela de encontros extraplanares'));
       expect(info, contains('Colunas: 3'));
-      expect(info, contains('Mediano'));
+      expect(info, contains('Custom 1d8'));
     });
   });
-} 
+}

@@ -18,7 +18,7 @@ class HumansTable extends MonsterTable<dynamic> {
   int get columnCount => 4;
 
   @override
-  DifficultyLevel get difficultyLevel => DifficultyLevel.easy; // 2D6 = 1D6 (simplificado)
+  DifficultyLevel get difficultyLevel => DifficultyLevel.custom2d6; // 2D6 conforme especificação
 
   @override
   TerrainType get terrainType => TerrainType.subterranean; // Não aplicável para esta tabela
@@ -108,7 +108,7 @@ class HumansTable extends MonsterTable<dynamic> {
 
   /// Obtém o resultado especial baseado no roll
   dynamic getSpecialResult(int roll) {
-    if (roll == 2 || roll == 10) {
+    if (roll == 2 || roll == 6) {
       return getSpecial(roll);
     }
     return getByPartyLevel(PartyLevel.beginners, roll);

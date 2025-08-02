@@ -40,25 +40,25 @@ class RoomSizeCalculator {
 
     // Parse de fórmulas como "1d6+4", "2d6+6", "3d6+8", etc.
     if (formulaWithoutSalas.contains('1d6+4')) {
-      return DiceRoller.roll(1, 6) + 4;
+      return DiceRoller.rollStatic(1, 6) + 4;
     } else if (formulaWithoutSalas.contains('1d6+6')) {
-      return DiceRoller.roll(1, 6) + 6;
+      return DiceRoller.rollStatic(1, 6) + 6;
     } else if (formulaWithoutSalas.contains('2d6+4')) {
-      return DiceRoller.roll(2, 6) + 4;
+      return DiceRoller.rollStatic(2, 6) + 4;
     } else if (formulaWithoutSalas.contains('2d6+6')) {
-      return DiceRoller.roll(2, 6) + 6;
+      return DiceRoller.rollStatic(2, 6) + 6;
     } else if (formulaWithoutSalas.contains('3d6+4')) {
-      return DiceRoller.roll(3, 6) + 4;
+      return DiceRoller.rollStatic(3, 6) + 4;
     } else if (formulaWithoutSalas.contains('3d6+6')) {
-      return DiceRoller.roll(3, 6) + 6;
+      return DiceRoller.rollStatic(3, 6) + 6;
     } else if (formulaWithoutSalas.contains('3d6+8')) {
-      return DiceRoller.roll(3, 6) + 8;
+      return DiceRoller.rollStatic(3, 6) + 8;
     } else if (formulaWithoutSalas.contains('4d6+10')) {
-      return DiceRoller.roll(4, 6) + 10;
+      return DiceRoller.rollStatic(4, 6) + 10;
     } else if (formulaWithoutSalas.contains('5d6+12')) {
-      return DiceRoller.roll(5, 6) + 12;
+      return DiceRoller.rollStatic(5, 6) + 12;
     } else if (formulaWithoutSalas.contains('6d6+14')) {
-      return DiceRoller.roll(6, 6) + 14;
+      return DiceRoller.rollStatic(6, 6) + 14;
     }
 
     // Fallback: tenta fazer parse genérico de fórmulas NdM+X
@@ -68,7 +68,7 @@ class RoomSizeCalculator {
       final diceCount = int.parse(match.group(1)!);
       final diceSides = int.parse(match.group(2)!);
       final bonus = int.parse(match.group(3)!);
-      return DiceRoller.roll(diceCount, diceSides) + bonus;
+      return DiceRoller.rollStatic(diceCount, diceSides) + bonus;
     }
 
     // Fallback: retorna um valor padrão

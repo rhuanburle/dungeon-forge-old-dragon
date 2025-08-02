@@ -3,6 +3,7 @@
 import '../enums/table_enums.dart';
 import '../models/encounter_generation.dart';
 import '../tables/table_manager.dart';
+import '../tables/base_table.dart';
 import '../utils/dice_roller.dart';
 
 /// Serviço para geração de encontros baseado nas tabelas A13
@@ -18,11 +19,11 @@ class EncounterGenerationService {
 
   /// Gera um encontro baseado na requisição fornecida
   EncounterGeneration generateEncounter(EncounterGenerationRequest request) {
-    // Determina o roll baseado na dificuldade
-    final roll = _rollForDifficulty(request.difficultyLevel);
-
     // Obtém a tabela apropriada para o terreno
     final table = _getTableForTerrain(request.terrainType);
+
+    // Determina o roll baseado na tabela
+    final roll = _rollForTable(table);
 
     // Obtém o resultado da tabela baseado no nível do grupo
     final result = _getResultFromTable(table, request.partyLevel, roll);
@@ -47,10 +48,35 @@ class EncounterGenerationService {
     );
   }
 
-  /// Rola o dado apropriado para o nível de dificuldade
-  int _rollForDifficulty(DifficultyLevel difficulty) {
-    final diceSides = difficulty.diceSides;
-    final roll = DiceRoller.roll(1, diceSides);
+  /// Rola o dado apropriado para a tabela
+  int _rollForTable(dynamic table) {
+    // Se a tabela tem dados customizados, usa eles
+    if (table is MonsterTable) {
+      final difficulty = table.difficultyLevel;
+
+      // Tratamento especial para 2d6
+      if (difficulty == DifficultyLevel.custom2d6) {
+        final roll = DiceRoller.rollStatic(2, 6); // 2d6 real
+        if (roll < 2 || roll > 12) {
+          throw ArgumentError('Roll deve estar entre 2 e 12 para 2d6');
+        }
+        return roll;
+      }
+
+      // Para outros dados, usa o número de lados
+      final diceSides = difficulty.diceSides;
+      final roll = DiceRoller.rollStatic(1, diceSides);
+
+      if (roll < 1 || roll > diceSides) {
+        throw ArgumentError('Roll deve estar entre 1 e $diceSides');
+      }
+
+      return roll;
+    }
+
+    // Fallback para dificuldade padrão
+    final diceSides = 12; // 1d12 como padrão
+    final roll = DiceRoller.rollStatic(1, diceSides);
 
     if (roll < 1 || roll > diceSides) {
       throw ArgumentError('Roll deve estar entre 1 e $diceSides');
@@ -77,8 +103,7 @@ class EncounterGenerationService {
       case TerrainType.deserts:
         return _tableManager.desertsEncounterTable;
       case TerrainType.forests:
-        // Use animals table for forests (no specific forest encounter table)
-        return _tableManager.animalsTable;
+        return _tableManager.forestsEncounterTable;
       case TerrainType.any:
         return _tableManager.anyHabitatTable;
       case TerrainType.extraplanar:
@@ -98,11 +123,18 @@ class EncounterGenerationService {
       return table.getSubterranean(adjustedRoll);
     }
 
-    // Handle extraplanar table which uses 1D8 (implemented as 1D10 with adjustment)
+    // Handle extraplanar table which uses 1D8
     if (table.runtimeType.toString().contains('ExtraplanarTable')) {
       // For extraplanar table, we need to adjust roll to 1-8 range
       final adjustedRoll = ((roll - 1) % 8) + 1;
       return table.getByPartyLevel(partyLevel, adjustedRoll);
+    }
+
+    // Handle humans table which uses 2D6
+    if (table.runtimeType.toString().contains('HumansTable')) {
+      // For humans table, we need to adjust roll to 2-12 range (2d6)
+      // Since roll is already 2-12 from 2d6, we can use it directly
+      return table.getByPartyLevel(partyLevel, roll);
     }
 
     // Try to use getByPartyLevel method first (for tables like AnyHabitatTable)
@@ -273,19 +305,19 @@ class EncounterGenerationService {
   int _rollForTableReference(TableReference reference) {
     switch (reference) {
       case TableReference.animalsTable:
-        return DiceRoller.roll(1, 6); // 1d6 para animais
+        return DiceRoller.rollStatic(1, 6); // 1d6 para animais
       case TableReference.anyTableI:
       case TableReference.anyTableII:
       case TableReference.anyTableIII:
-        return DiceRoller.roll(1, 4); // 1d4 para tabelas qualquer
+        return DiceRoller.rollStatic(1, 4); // 1d4 para tabelas qualquer
       case TableReference.humansTable:
-        return DiceRoller.roll(1, 6); // 1d6 para humanos
+        return DiceRoller.rollStatic(1, 6); // 1d6 para humanos
       case TableReference.extraplanarTableI:
       case TableReference.extraplanarTableII:
       case TableReference.extraplanarTableIII:
-        return DiceRoller.roll(1, 4); // 1d4 para extraplanar
+        return DiceRoller.rollStatic(1, 4); // 1d4 para extraplanar
       default:
-        return DiceRoller.roll(1, 4); // Fallback para casos não mapeados
+        return DiceRoller.rollStatic(1, 4); // Fallback para casos não mapeados
     }
   }
 
@@ -295,55 +327,58 @@ class EncounterGenerationService {
     switch (monsterType) {
       // Subterrâneo - Tabela A13.1
       case MonsterType.giantRat:
-        return DiceRoller.roll(3, 6); // 3d6
+        return DiceRoller.rollStatic(3, 6); // 3d6
       case MonsterType.kobold:
-        return DiceRoller.roll(4, 4); // 4d4
+        return DiceRoller.rollStatic(4, 4); // 4d4
       case MonsterType.troglodyte:
-        return DiceRoller.roll(1, 8); // 1d8
+        return DiceRoller.rollStatic(1, 8); // 1d8
       case MonsterType.thoul:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.pygmyFungus:
-        return DiceRoller.roll(2, 6); // 2d6
+        return DiceRoller.rollStatic(2, 6); // 2d6
       case MonsterType.violetFungus:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.drowElf:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.bugbear:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.derro:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.shriekerFungus:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.drider:
-        return DiceRoller.roll(1, 3); // 1d3
+        return DiceRoller.rollStatic(1, 3); // 1d3
       case MonsterType.brainDevourer:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
 
       // Planícies - Tabela A13.2
       case MonsterType.gnoll:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.goblin:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.lizardMan:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.orc:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.hellhound:
-        return DiceRoller.roll(2, 4); // 2d4
+        return DiceRoller.rollStatic(2, 4); // 2d4
       case MonsterType.ogre:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.insectSwarm:
         return 1; // Enxame (solitário)
       case MonsterType.oniMage:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.troll:
-        return DiceRoller.roll(1, 6); // 1d6 (pode variar conforme a tabela)
+        return DiceRoller.rollStatic(
+          1,
+          6,
+        ); // 1d6 (pode variar conforme a tabela)
       case MonsterType.basilisk:
         return 1; // Solitário
       case MonsterType.gorgon:
-        return DiceRoller.roll(1, 2); // 1d2
+        return DiceRoller.rollStatic(1, 2); // 1d2
       case MonsterType.treant:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.chimera:
         return 1; // Solitário
       case MonsterType.bulette:
@@ -355,9 +390,9 @@ class EncounterGenerationService {
 
       // Colinas - Tabela A13.3
       case MonsterType.drakold:
-        return DiceRoller.roll(4, 4); // 4d4
+        return DiceRoller.rollStatic(4, 4); // 4d4
       case MonsterType.hobgoblin:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.werewolf:
         return 1; // Solitário
       case MonsterType.cockatrice:
@@ -365,29 +400,29 @@ class EncounterGenerationService {
       case MonsterType.ettin:
         return 1; // Solitário
       case MonsterType.hillGiant:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
 
       // Montanhas - Tabela A13.4
       case MonsterType.fireGiant:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.harpy:
-        return DiceRoller.roll(1, 6); // 1d6
+        return DiceRoller.rollStatic(1, 6); // 1d6
       case MonsterType.manticore:
-        return DiceRoller.roll(1, 2); // 1d2
+        return DiceRoller.rollStatic(1, 2); // 1d2
       case MonsterType.wyvern:
-        return DiceRoller.roll(1, 2); // 1d2
+        return DiceRoller.rollStatic(1, 2); // 1d2
       case MonsterType.iceGiant:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.fireGiant2:
         return 1; // Solitário
 
       // Pântanos - Tabela A13.5
       case MonsterType.stirge:
-        return DiceRoller.roll(1, 10); // 1d10
+        return DiceRoller.rollStatic(1, 10); // 1d10
       case MonsterType.sibilant:
-        return DiceRoller.roll(4, 4); // 4d4
+        return DiceRoller.rollStatic(4, 4); // 4d4
       case MonsterType.giantViper:
-        return DiceRoller.roll(1, 2); // 1d2
+        return DiceRoller.rollStatic(1, 2); // 1d2
       case MonsterType.medusa:
         return 1; // Solitário
       case MonsterType.fleshGolem:
@@ -411,7 +446,7 @@ class EncounterGenerationService {
       case MonsterType.camouflagedSpiderGiant:
         return 1; // Solitário
       case MonsterType.scarletWorm:
-        return DiceRoller.roll(1, 3); // 1d3
+        return DiceRoller.rollStatic(1, 3); // 1d3
       case MonsterType.stoneGolem:
         return 1; // Solitário
 
@@ -419,19 +454,19 @@ class EncounterGenerationService {
       case MonsterType.hunterSpiderGiant:
         return 1; // Solitário
       case MonsterType.blackSpiderGiantForest:
-        return DiceRoller.roll(3, 6); // 3d6
+        return DiceRoller.rollStatic(3, 6); // 3d6
       case MonsterType.antGiantForest:
         return 1; // Solitário
       case MonsterType.owlbear:
-        return DiceRoller.roll(1, 4); // 1d4
+        return DiceRoller.rollStatic(1, 4); // 1d4
       case MonsterType.cursedTree:
-        return DiceRoller.roll(1, 3); // 1d3
+        return DiceRoller.rollStatic(1, 3); // 1d3
       case MonsterType.deadlyVine:
         return 1; // Solitário
       case MonsterType.werebearForest:
-        return DiceRoller.roll(1, 3); // 1d3
+        return DiceRoller.rollStatic(1, 3); // 1d3
       case MonsterType.worg:
-        return DiceRoller.roll(1, 3); // 1d3
+        return DiceRoller.rollStatic(1, 3); // 1d3
 
       // Monstros solitários (sem quantidade especificada)
       case MonsterType.otyugh:
@@ -460,7 +495,7 @@ class EncounterGenerationService {
 
       // Fallback para outros monstros
       default:
-        return DiceRoller.roll(1, 4); // 1d4 como fallback
+        return DiceRoller.rollStatic(1, 4); // 1d4 como fallback
     }
   }
 

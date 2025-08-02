@@ -25,7 +25,7 @@ class TreasureResolver {
 
     // Handle "1 em 1d6" - roll to see if there's treasure
     if (template.contains('1 em 1d6')) {
-      final roll = DiceRoller.roll(1, 6);
+      final roll = DiceRoller.rollStatic(1, 6);
       if (roll == 1) {
         // Extract the treasure part after "1 em 1d6"
         final parts = template.split('1 em 1d6');
@@ -63,7 +63,7 @@ class TreasureResolver {
         final multiplierStr = match.group(3);
         final unit = match.group(4) ?? '';
 
-        int value = DiceRoller.roll(diceCount, diceSides);
+        int value = DiceRoller.rollStatic(diceCount, diceSides);
         if (multiplierStr != null) {
           // Remove pontos de milhares antes de converter
           final cleanMultiplier = multiplierStr.replaceAll('.', '');
@@ -115,7 +115,7 @@ class TreasureResolver {
   static String _resolveGemas(int count) {
     final gemas = <String>[];
     for (int i = 0; i < count; i++) {
-      final roll = DiceRoller.roll(2, 6);
+      final roll = DiceRoller.rollStatic(2, 6);
       String categoria;
       String valor;
 
@@ -146,7 +146,7 @@ class TreasureResolver {
     final objetos = <String>[];
     for (int i = 0; i < count; i++) {
       // Primeiro rola para determinar o tipo
-      final tipoRoll = DiceRoller.roll(2, 6);
+      final tipoRoll = DiceRoller.rollStatic(2, 6);
       String tipo;
 
       if (tipoRoll <= 3) {
@@ -164,7 +164,7 @@ class TreasureResolver {
       }
 
       // Depois rola para determinar o item específico
-      final itemRoll = DiceRoller.roll(2, 6);
+      final itemRoll = DiceRoller.rollStatic(2, 6);
       String item;
 
       switch (tipo) {
@@ -318,7 +318,7 @@ class TreasureResolver {
       itemType = 'Armas';
     } else if (type.contains('Qualquer')) {
       // Para "Qualquer", rola 1d100 para determinar o tipo
-      final roll = DiceRoller.roll(1, 100);
+      final roll = DiceRoller.rollStatic(1, 100);
       if (roll <= 30) {
         itemType = 'Não Arma';
       } else if (roll <= 60) {
@@ -340,7 +340,7 @@ class TreasureResolver {
     }
 
     // Agora rola 1d100 para determinar o item específico
-    final itemRoll = DiceRoller.roll(1, 100);
+    final itemRoll = DiceRoller.rollStatic(1, 100);
 
     // Determina o item baseado no tipo e roll
     switch (itemType) {

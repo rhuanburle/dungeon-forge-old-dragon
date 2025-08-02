@@ -7,7 +7,7 @@ class MagicItemResolver {
   /// Resolve um item mágico baseado no tipo
   static String resolve(String type) {
     final itemType = _determineItemType(type);
-    final itemRoll = DiceRoller.roll(1, 100);
+    final itemRoll = DiceRoller.rollStatic(1, 100);
 
     return _resolveByType(itemType, itemRoll);
   }
@@ -20,7 +20,7 @@ class MagicItemResolver {
       return MagicItemType.armas;
     } else if (type.contains('Qualquer')) {
       // Para "Qualquer", rola 1d100 para determinar o tipo
-      final roll = DiceRoller.roll(1, 100);
+      final roll = DiceRoller.rollStatic(1, 100);
       if (roll <= 30) {
         return MagicItemType.naoArma;
       } else if (roll <= 60) {

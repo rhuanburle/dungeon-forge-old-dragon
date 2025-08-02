@@ -9,7 +9,7 @@ class GemResolver {
     final gemas = <String>[];
 
     for (int i = 0; i < count; i++) {
-      final roll = DiceRoller.roll(2, 6);
+      final roll = DiceRoller.rollStatic(2, 6);
       final gem = _resolveSingleGem(roll);
       gemas.add(gem);
     }

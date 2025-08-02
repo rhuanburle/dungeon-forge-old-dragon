@@ -19,7 +19,7 @@ void main() {
         equals('Tabela de humanos e semi-humanos por nível'),
       );
       expect(table.columnCount, equals(4));
-      expect(table.difficultyLevel, equals(DifficultyLevel.medium));
+      expect(table.difficultyLevel, equals(DifficultyLevel.custom2d6));
     });
 
     test('should return correct values for beginners column', () {
@@ -29,10 +29,6 @@ void main() {
       expect(table.getBeginners(4), equals(MonsterType.mercenaries));
       expect(table.getBeginners(5), equals(MonsterType.patrols));
       expect(table.getBeginners(6), equals(MonsterType.commonMen));
-      expect(table.getBeginners(7), equals(MonsterType.merchants));
-      expect(table.getBeginners(8), equals(MonsterType.bandits));
-      expect(table.getBeginners(9), equals(MonsterType.nobles));
-      expect(table.getBeginners(10), equals(MonsterType.nomads));
     });
 
     test('should return correct values for heroic column', () {
@@ -42,10 +38,6 @@ void main() {
       expect(table.getHeroic(4), equals(MonsterType.mercenaries));
       expect(table.getHeroic(5), equals(MonsterType.patrols));
       expect(table.getHeroic(6), equals(MonsterType.commonMen));
-      expect(table.getHeroic(7), equals(MonsterType.merchants));
-      expect(table.getHeroic(8), equals(MonsterType.bandits));
-      expect(table.getHeroic(9), equals(MonsterType.nobles));
-      expect(table.getHeroic(10), equals(MonsterType.nomads));
     });
 
     test('should return correct values for advanced column', () {
@@ -55,10 +47,6 @@ void main() {
       expect(table.getAdvanced(4), equals(MonsterType.mercenaries));
       expect(table.getAdvanced(5), equals(MonsterType.patrols));
       expect(table.getAdvanced(6), equals(MonsterType.commonMen));
-      expect(table.getAdvanced(7), equals(MonsterType.merchants));
-      expect(table.getAdvanced(8), equals(MonsterType.bandits));
-      expect(table.getAdvanced(9), equals(MonsterType.nobles));
-      expect(table.getAdvanced(10), equals(MonsterType.nomads));
     });
 
     test('should return correct values for special column', () {
@@ -68,10 +56,6 @@ void main() {
       expect(table.getSpecial(4), equals(MonsterType.fanatics));
       expect(table.getSpecial(5), equals(MonsterType.fanatics));
       expect(table.getSpecial(6), equals(MonsterType.berserkers));
-      expect(table.getSpecial(7), equals(MonsterType.berserkers));
-      expect(table.getSpecial(8), equals(MonsterType.dwarves));
-      expect(table.getSpecial(9), equals(MonsterType.dwarves));
-      expect(table.getSpecial(10), equals(MonsterType.gnomes));
     });
 
     test('should work with getByPartyLevel method', () {
@@ -90,9 +74,9 @@ void main() {
     });
 
     test('should work with getSpecialResult method', () {
-      // Para rolls 2 e 10, deve retornar resultado especial
+      // Para rolls 2 e 6, deve retornar resultado especial
       expect(table.getSpecialResult(2), equals(MonsterType.halflings));
-      expect(table.getSpecialResult(10), equals(MonsterType.gnomes));
+      expect(table.getSpecialResult(6), equals(MonsterType.berserkers));
 
       // Para outros rolls, deve retornar resultado normal
       expect(table.getSpecialResult(1), equals(MonsterType.caveMen));
@@ -101,9 +85,9 @@ void main() {
 
     test('should throw error for invalid roll', () {
       expect(() => table.getBeginners(0), throwsArgumentError);
-      expect(() => table.getBeginners(12), throwsArgumentError);
+      expect(() => table.getBeginners(13), throwsArgumentError);
       expect(() => table.getHeroic(0), throwsArgumentError);
-      expect(() => table.getHeroic(12), throwsArgumentError);
+      expect(() => table.getHeroic(13), throwsArgumentError);
     });
 
     test('should return correct table info', () {
@@ -111,7 +95,7 @@ void main() {
       expect(info, contains('Tabela A13.11 - Humanos e Semi-Humanos'));
       expect(info, contains('Tabela de humanos e semi-humanos por nível'));
       expect(info, contains('Colunas: 4'));
-      expect(info, contains('Mediano'));
+      expect(info, contains('Custom 2d6'));
     });
   });
 }

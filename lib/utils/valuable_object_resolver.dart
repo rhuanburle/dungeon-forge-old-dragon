@@ -9,8 +9,8 @@ class ValuableObjectResolver {
     final objetos = <String>[];
 
     for (int i = 0; i < count; i++) {
-      final tipoRoll = DiceRoller.roll(2, 6);
-      final itemRoll = DiceRoller.roll(2, 6);
+      final tipoRoll = DiceRoller.rollStatic(2, 6);
+      final itemRoll = DiceRoller.rollStatic(2, 6);
 
       final tipo = _getTipo(tipoRoll);
       final item = _getItem(tipo, itemRoll);

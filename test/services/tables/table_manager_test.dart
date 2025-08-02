@@ -16,22 +16,22 @@ void main() {
       final tables = manager.allTables;
 
       expect(tables, isNotEmpty);
-      expect(tables.length, equals(15)); // Agora temos 15 tabelas
+      expect(tables.length, equals(16)); // Agora temos 16 tabelas
 
       // Verificar se todas as tabelas têm nomes únicos
       final tableNames = tables.map((table) => table.tableName).toSet();
-      expect(tableNames.length, equals(15));
+      expect(tableNames.length, equals(16));
     });
 
     test('should return correct number of tables', () {
       final manager = TableManager();
-      expect(manager.allTables.length, equals(15)); // Atualizado para 15
+      expect(manager.allTables.length, equals(16)); // Atualizado para 16
     });
 
     test('should return table names', () {
       final manager = TableManager();
       final names = manager.tableNames;
-      expect(names.length, equals(15)); // Atualizado para 15
+      expect(names.length, equals(16)); // Atualizado para 16
       expect(names, contains('Tabela 9.1 - Geração de Masmorras'));
       expect(names, contains('Tabela 9.2 - Salas e Câmaras de Masmorras'));
       expect(names, contains('Tabela A13.1 - Encontros no Subterrâneo'));

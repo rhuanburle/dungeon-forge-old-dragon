@@ -39,7 +39,7 @@ class TreasureParser {
 
     // Analisa "1 em 1d6"
     if (template.contains('1 em 1d6')) {
-      final roll = DiceRoller.roll(1, 6);
+      final roll = DiceRoller.rollStatic(1, 6);
       if (roll == 1) {
         final parts = template.split('1 em 1d6');
         if (parts.length > 1) {
@@ -76,10 +76,9 @@ class TreasureParser {
         final unit = numberMatch.group(2) ?? '';
 
         if (unit.isNotEmpty) {
-          components.add(TreasureComponent.simple(
-            int.parse(number),
-            unit.trim(),
-          ));
+          components.add(
+            TreasureComponent.simple(int.parse(number), unit.trim()),
+          );
         }
         continue;
       }
@@ -112,7 +111,7 @@ class TreasureParser {
     final multiplierStr = match.group(3);
     final unit = match.group(4) ?? '';
 
-    int value = DiceRoller.roll(diceCount, diceSides);
+    int value = DiceRoller.rollStatic(diceCount, diceSides);
     if (multiplierStr != null) {
       final cleanMultiplier = multiplierStr.replaceAll('.', '');
       value *= int.parse(cleanMultiplier);
@@ -169,10 +168,7 @@ class TreasureComponent {
 
   /// Cria um componente raw
   factory TreasureComponent.raw(String text) {
-    return TreasureComponent._(
-      type: TreasureComponentType.raw,
-      rawText: text,
-    );
+    return TreasureComponent._(type: TreasureComponentType.raw, rawText: text);
   }
 
   @override
@@ -191,10 +187,4 @@ class TreasureComponent {
 }
 
 /// Tipos de componentes de tesouro
-enum TreasureComponentType {
-  empty,
-  dice,
-  simple,
-  magicItem,
-  raw,
-}
+enum TreasureComponentType { empty, dice, simple, magicItem, raw }

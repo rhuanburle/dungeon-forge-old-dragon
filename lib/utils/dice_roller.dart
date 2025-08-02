@@ -1,55 +1,85 @@
-// utils/dice_roller.dart
-
 import 'dart:math';
 
-/// Utility that encapsulates common dice-rolling behaviour.
-/// Allows rolling like 2d6, 3d6+4, 1d6×100 etc.
-class DiceRoller {
-  static final _rand = Random();
+import '../enums/dice_enums.dart';
 
-  /// Rolls [times] dice, each with [sides] sides.
-  /// Returns the total value rolled.
-  static int roll(int times, int sides) {
-    int total = 0;
-    for (int i = 0; i < times; i++) {
-      total += _rand.nextInt(sides) + 1; // 1..sides inclusive
-    }
-    return total;
+// Classe que representa uma rolagem de dados
+class DiceRoll {
+  final DiceType type;
+  final int quantity;
+  final int modifier;
+
+  const DiceRoll({required this.type, this.quantity = 1, this.modifier = 0})
+    : assert(quantity > 0, 'Quantity must be at least 1'),
+      assert(modifier >= 0, 'Modifier must be non-negative');
+
+  // Método de fábrica para criar rolagens com notação RPG
+  factory DiceRoll.fromNotation(String notation) {
+    final exp = notation.replaceAll(' ', '').toLowerCase();
+    final regex = RegExp(r'^(\d+)?d(\d+)([+-]\d+)?$');
+    final match = regex.firstMatch(exp);
+
+    if (match == null)
+      throw FormatException('Invalid dice notation: $notation');
+
+    final qty = int.tryParse(match[1] ?? '1') ?? 1;
+    final sides = int.parse(match[2]!);
+    final mod = int.tryParse(match[3] ?? '0') ?? 0;
+
+    final type = DiceType.values.firstWhere(
+      (d) => d.sides == sides,
+      orElse: () => throw ArgumentError('Unsupported dice type: d$sides'),
+    );
+
+    return DiceRoll(type: type, quantity: qty, modifier: mod);
   }
 
-  /// Parses and rolls a notation like `3d6+4` or `1d6*100`.
-  /// Supports:
-  ///   – Addition (+N)
-  ///   – Multiplication (*N or ×N)
-  /// Returns the computed result.
-  /// Throws FormatException on malformed input.
-  static int rollFormula(String formula) {
-    final diceRegex = RegExp(r'^(\d+)d(\d+)([+x\*×]?)(\d+)?');
-    final match = diceRegex.firstMatch(formula.replaceAll(" ", ""));
-    if (match == null) throw FormatException('Invalid dice formula: $formula');
+  // Calcula o valor mínimo possível
+  int get min => quantity * 1 + modifier;
 
-    final times = int.parse(match.group(1)!);
-    final sides = int.parse(match.group(2)!);
-    final operator = match.group(3);
-    final operandStr = match.group(4);
+  // Calcula o valor máximo possível
+  int get max => quantity * type.sides + modifier;
 
-    int base = roll(times, sides);
+  @override
+  String toString() {
+    final modStr = modifier != 0 ? '${modifier >= 0 ? '+' : ''}$modifier' : '';
+    return '${quantity}d${type.sides}$modStr';
+  }
+}
 
-    if (operator != null && operator.isNotEmpty && operandStr != null) {
-      final operand = int.parse(operandStr);
-      switch (operator) {
-        case '+':
-          base += operand;
-          break;
-        case '*':
-        case 'x':
-        case '×':
-          base *= operand;
-          break;
-        default:
-          throw FormatException('Unsupported operator in formula: $operator');
-      }
+// Classe responsável por executar as rolagens
+class DiceRoller {
+  final Random _random;
+
+  DiceRoller() : _random = Random();
+
+  DiceRoller.withSeed(int seed) : _random = Random(seed);
+
+  // Executa uma rolagem única
+  int roll(DiceRoll diceRoll) {
+    var total = 0;
+    for (var i = 0; i < diceRoll.quantity; i++) {
+      total += _random.nextInt(diceRoll.type.sides) + 1;
     }
-    return base;
+    return total + diceRoll.modifier;
+  }
+
+  // Executa múltiplas rolagens do mesmo tipo
+  List<int> rollMultiple(DiceRoll diceRoll, int times) {
+    return List.generate(times, (_) => roll(diceRoll));
+  }
+
+  // Métodos de conveniência para compatibilidade com código existente
+  static int rollStatic(int times, int sides) {
+    final roller = DiceRoller();
+    final diceType = DiceType.values.firstWhere(
+      (d) => d.sides == sides,
+      orElse: () => throw ArgumentError('Unsupported dice type: d$sides'),
+    );
+    return roller.roll(DiceRoll(type: diceType, quantity: times));
+  }
+
+  static int rollFormula(String formula) {
+    final roller = DiceRoller();
+    return roller.roll(DiceRoll.fromNotation(formula));
   }
 }

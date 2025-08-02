@@ -18,7 +18,7 @@ class ExtraplanarTable extends MonsterTable<dynamic> {
   int get columnCount => 3;
 
   @override
-  DifficultyLevel get difficultyLevel => DifficultyLevel.medium; // 1D8 implementado como 1D10 (mais próximo)
+  DifficultyLevel get difficultyLevel => DifficultyLevel.custom8; // 1D8 conforme especificação
 
   @override
   TerrainType get terrainType => TerrainType.subterranean; // Não aplicável para esta tabela

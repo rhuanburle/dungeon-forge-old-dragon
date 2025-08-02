@@ -14,21 +14,21 @@ class DungeonDataService {
     final dungeonTable = _tableManager.dungeonTable;
 
     // Rolagem de 2d6 para cada coluna da Tabela 9.1
-    final col1Roll = DiceRoller.roll(2, 6);
-    final col2Roll = DiceRoller.roll(2, 6);
-    final col3Roll = DiceRoller.roll(2, 6);
-    final col4Roll = DiceRoller.roll(2, 6);
-    final col5Roll = DiceRoller.roll(2, 6);
-    final col6Roll = DiceRoller.roll(2, 6);
-    final col7Roll = DiceRoller.roll(2, 6);
-    final col8Roll = DiceRoller.roll(2, 6);
-    final col9Roll = DiceRoller.roll(2, 6);
-    final col10Roll = DiceRoller.roll(2, 6);
-    final col11Roll = DiceRoller.roll(2, 6);
-    final col12Roll = DiceRoller.roll(2, 6);
-    final col13Roll = DiceRoller.roll(2, 6);
-    final col14Roll = DiceRoller.roll(2, 6);
-    final col15Roll = DiceRoller.roll(2, 6);
+    final col1Roll = DiceRoller.rollStatic(2, 6);
+    final col2Roll = DiceRoller.rollStatic(2, 6);
+    final col3Roll = DiceRoller.rollStatic(2, 6);
+    final col4Roll = DiceRoller.rollStatic(2, 6);
+    final col5Roll = DiceRoller.rollStatic(2, 6);
+    final col6Roll = DiceRoller.rollStatic(2, 6);
+    final col7Roll = DiceRoller.rollStatic(2, 6);
+    final col8Roll = DiceRoller.rollStatic(2, 6);
+    final col9Roll = DiceRoller.rollStatic(2, 6);
+    final col10Roll = DiceRoller.rollStatic(2, 6);
+    final col11Roll = DiceRoller.rollStatic(2, 6);
+    final col12Roll = DiceRoller.rollStatic(2, 6);
+    final col13Roll = DiceRoller.rollStatic(2, 6);
+    final col14Roll = DiceRoller.rollStatic(2, 6);
+    final col15Roll = DiceRoller.rollStatic(2, 6);
 
     // Obtém os valores das tabelas
     final type = dungeonTable.getColumn1(col1Roll);
@@ -68,7 +68,11 @@ class DungeonDataService {
 
   /// Resolve referências de ocupantes nos rumores
   String resolveOccupantReferences(
-      String text, String occupantI, String occupantII, String leader) {
+    String text,
+    String occupantI,
+    String occupantII,
+    String leader,
+  ) {
     return text
         .replaceAll('[coluna 10]', occupantI)
         .replaceAll('[coluna 11]', occupantII)

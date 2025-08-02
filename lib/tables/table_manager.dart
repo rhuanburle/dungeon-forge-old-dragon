@@ -12,6 +12,7 @@ import 'mountains_encounter_table.dart';
 import 'swamps_encounter_table.dart';
 import 'glaciers_encounter_table.dart';
 import 'deserts_encounter_table.dart';
+import 'forests_encounter_table.dart';
 import 'animals_table.dart';
 import 'humans_table.dart';
 import 'extraplanar_table.dart';
@@ -41,6 +42,7 @@ class TableManager {
   final GlaciersEncounterTable _glaciersEncounterTable =
       GlaciersEncounterTable();
   final DesertsEncounterTable _desertsEncounterTable = DesertsEncounterTable();
+  final ForestsEncounterTable _forestsEncounterTable = ForestsEncounterTable();
   final AnimalsTable _animalsTable = AnimalsTable();
   final HumansTable _humansTable = HumansTable();
   final ExtraplanarTable _extraplanarTable = ExtraplanarTable();
@@ -81,6 +83,9 @@ class TableManager {
   /// Obtém a tabela de encontros em desertos (Tabela A13.7)
   DesertsEncounterTable get desertsEncounterTable => _desertsEncounterTable;
 
+  /// Obtém a tabela de encontros em florestas (Tabela A13.8)
+  ForestsEncounterTable get forestsEncounterTable => _forestsEncounterTable;
+
   /// Obtém a tabela de animais (Tabela A13.2)
   AnimalsTable get animalsTable => _animalsTable;
 
@@ -106,6 +111,7 @@ class TableManager {
     _swampsEncounterTable,
     _glaciersEncounterTable,
     _desertsEncounterTable,
+    _forestsEncounterTable,
     _animalsTable,
     _humansTable,
     _extraplanarTable,

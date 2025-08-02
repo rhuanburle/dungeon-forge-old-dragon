@@ -43,14 +43,14 @@ class DungeonGenerationDto {
     final targetDescription = targetStatus == DungeonTargetStatus.beingSought
         ? 'que está sendo procurado'
         : targetStatus == DungeonTargetStatus.destroyed
-            ? 'que está sendo destruído'
-            : targetStatus == DungeonTargetStatus.disappeared
-                ? 'que desapareceu'
-                : targetStatus == DungeonTargetStatus.stolen
-                    ? 'que foi roubado'
-                    : targetStatus == DungeonTargetStatus.intact
-                        ? 'que está intacto'
-                        : 'que está soterrado';
+        ? 'que está sendo destruído'
+        : targetStatus == DungeonTargetStatus.disappeared
+        ? 'que desapareceu'
+        : targetStatus == DungeonTargetStatus.stolen
+        ? 'que foi roubado'
+        : targetStatus == DungeonTargetStatus.intact
+        ? 'que está intacto'
+        : 'que está soterrado';
 
     return '${objective.description} ${target.description} $targetDescription';
   }

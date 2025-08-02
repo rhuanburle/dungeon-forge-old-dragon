@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'dart:math';
 import '../../lib/services/dungeon_generator_refactored.dart';
 import '../../lib/utils/dice_roller.dart';
+import '../../lib/enums/table_enums.dart';
 
 /// Mock class para testar com valores determinísticos
 class MockRandom extends Mock implements Random {}
@@ -17,10 +18,7 @@ void main() {
 
         // Test multiple generations to ensure consistency
         for (int i = 0; i < 10; i++) {
-          final dungeon = generator.generate(
-            level: 3,
-            theme: 'Test Theme',
-          );
+          final dungeon = generator.generate(level: 3, theme: 'Test Theme');
 
           // Basic structure validation
           expect(dungeon.type, isNotEmpty);
@@ -109,10 +107,14 @@ void main() {
               'Sala Armadilha Especial',
             ];
 
-            final hasValidType =
-                validTypes.any((type) => room.type.contains(type));
-            expect(hasValidType, isTrue,
-                reason: 'Invalid room type: ${room.type}');
+            final hasValidType = validTypes.any(
+              (type) => room.type.contains(type),
+            );
+            expect(
+              hasValidType,
+              isTrue,
+              reason: 'Invalid room type: ${room.type}',
+            );
           }
         }
       });
@@ -228,15 +230,16 @@ void main() {
               // When item is "itens encontrados especial…", specialItem should be filled
               expect(room.specialItem, isNotEmpty);
               expect(
-                  room.specialItem,
-                  anyOf(
-                    equals('carcaças de monstros'),
-                    equals('papéis velhos e rasgados'),
-                    equals('ossadas empilhadas'),
-                    equals('restos de tecidos sujos'),
-                    equals('caixas, sacos e baús vazios'),
-                    equals('caixas, sacos e baús cheios'),
-                  ));
+                room.specialItem,
+                anyOf(
+                  equals('carcaças de monstros'),
+                  equals('papéis velhos e rasgados'),
+                  equals('ossadas empilhadas'),
+                  equals('restos de tecidos sujos'),
+                  equals('caixas, sacos e baús vazios'),
+                  equals('caixas, sacos e baús cheios'),
+                ),
+              );
             } else {
               // When item is not "itens encontrados especial…", specialItem should be empty
               expect(room.specialItem, isEmpty);
@@ -291,7 +294,8 @@ void main() {
           if (room.item == 'itens encontrados especial…') {
             roomsWithSpecialItems++;
             print(
-                'Room $i: item="${room.item}", specialItem="${room.specialItem}"');
+              'Room $i: item="${room.item}", specialItem="${room.specialItem}"',
+            );
           }
         }
 
@@ -323,8 +327,11 @@ void main() {
               final startIndex = room.type.indexOf('(');
               final endIndex = room.type.indexOf(')');
               final content = room.type.substring(startIndex + 1, endIndex);
-              expect(content.trim(), isNotEmpty,
-                  reason: 'Room type: ${room.type}');
+              expect(
+                content.trim(),
+                isNotEmpty,
+                reason: 'Room type: ${room.type}',
+              );
             }
           }
         }
@@ -335,15 +342,19 @@ void main() {
       test('should handle minimum level correctly', () {
         final generator = DungeonGeneratorRefactored();
 
-        expect(() => generator.generate(level: 1, theme: 'Min Level'),
-            returnsNormally);
+        expect(
+          () => generator.generate(level: 1, theme: 'Min Level'),
+          returnsNormally,
+        );
       });
 
       test('should handle high level correctly', () {
         final generator = DungeonGeneratorRefactored();
 
-        expect(() => generator.generate(level: 20, theme: 'High Level'),
-            returnsNormally);
+        expect(
+          () => generator.generate(level: 20, theme: 'High Level'),
+          returnsNormally,
+        );
       });
 
       test('should handle extreme room counts', () {
@@ -387,15 +398,20 @@ void main() {
             if (room.treasure.isNotEmpty &&
                 room.treasure != 'Nenhum' &&
                 room.treasure != 'Nenhum Tesouro') {
-              expect(room.treasure, isNot(matches(r'\d+d\d+')),
-                  reason:
-                      'Unresolved dice formula in treasure: ${room.treasure}');
+              expect(
+                room.treasure,
+                isNot(matches(r'\d+d\d+')),
+                reason: 'Unresolved dice formula in treasure: ${room.treasure}',
+              );
             }
 
             if (room.specialTreasure.isNotEmpty) {
-              expect(room.specialTreasure, isNot(matches(r'\d+d\d+')),
-                  reason:
-                      'Unresolved dice formula in special treasure: ${room.specialTreasure}');
+              expect(
+                room.specialTreasure,
+                isNot(matches(r'\d+d\d+')),
+                reason:
+                    'Unresolved dice formula in special treasure: ${room.specialTreasure}',
+              );
             }
 
             if (room.magicItem.isNotEmpty) {
@@ -409,6 +425,74 @@ void main() {
           }
         }
       });
+    });
+  });
+
+  group('TableReference handling', () {
+    test('should handle TableReference.anyTableI correctly', () {
+      final generator = DungeonGeneratorRefactored();
+      final dungeon = generator.generate(
+        level: 3,
+        theme: 'Test',
+        terrainType: TerrainType.subterranean,
+        difficultyLevel: DifficultyLevel.medium,
+        partyLevel: PartyLevel.beginners,
+        useEncounterTables: true,
+      );
+
+      // Verifica se os ocupantes não contêm "TableReference.anyTablell"
+      expect(dungeon.occupant1, isNot(contains('TableReference')));
+      expect(dungeon.occupant2, isNot(contains('TableReference')));
+      expect(dungeon.leader, isNot(contains('TableReference')));
+
+      // Verifica se os ocupantes são strings válidas
+      expect(dungeon.occupant1, isA<String>());
+      expect(dungeon.occupant2, isA<String>());
+      expect(dungeon.leader, isA<String>());
+    });
+
+    test('should handle TableReference.anyTableII correctly', () {
+      final generator = DungeonGeneratorRefactored();
+      final dungeon = generator.generate(
+        level: 3,
+        theme: 'Test',
+        terrainType: TerrainType.plains,
+        difficultyLevel: DifficultyLevel.medium,
+        partyLevel: PartyLevel.heroic,
+        useEncounterTables: true,
+      );
+
+      // Verifica se os ocupantes não contêm "TableReference.anyTablell"
+      expect(dungeon.occupant1, isNot(contains('TableReference')));
+      expect(dungeon.occupant2, isNot(contains('TableReference')));
+      expect(dungeon.leader, isNot(contains('TableReference')));
+
+      // Verifica se os ocupantes são strings válidas
+      expect(dungeon.occupant1, isA<String>());
+      expect(dungeon.occupant2, isA<String>());
+      expect(dungeon.leader, isA<String>());
+    });
+
+    test('should handle TableReference.anyTableIII correctly', () {
+      final generator = DungeonGeneratorRefactored();
+      final dungeon = generator.generate(
+        level: 3,
+        theme: 'Test',
+        terrainType: TerrainType.forests,
+        difficultyLevel: DifficultyLevel.challenging,
+        partyLevel: PartyLevel.advanced,
+        useEncounterTables: true,
+      );
+
+      // Verifica se os ocupantes não contêm "TableReference.anyTablell"
+      expect(dungeon.occupant1, isNot(contains('TableReference')));
+      expect(dungeon.occupant2, isNot(contains('TableReference')));
+      expect(dungeon.leader, isNot(contains('TableReference')));
+
+      // Verifica se os ocupantes são strings válidas
+      expect(dungeon.occupant1, isA<String>());
+      expect(dungeon.occupant2, isA<String>());
+      expect(dungeon.leader, isA<String>());
     });
   });
 }

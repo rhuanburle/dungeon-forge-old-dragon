@@ -1,13 +1,13 @@
 // presentation/features/dungeon/dungeon_page.dart
 
 import 'package:flutter/material.dart';
+import '../../../enums/table_enums.dart';
+import '../../../services/dungeon_generator_refactored.dart';
 import '../../../models/dungeon.dart';
 import '../../../models/room.dart';
-import '../../../services/dungeon_generator_refactored.dart';
-import '../../../constants/image_path.dart';
 import '../../../theme/app_colors.dart';
+import '../../../constants/image_path.dart';
 import '../../shared/widgets/dungeon_info_card.dart';
-import '../../shared/widgets/room_info_card.dart';
 import '../../shared/widgets/action_button.dart';
 import '../../shared/widgets/custom_text_field.dart';
 
@@ -26,6 +26,12 @@ class _DungeonPageState extends State<DungeonPage> {
   final TextEditingController _roomCountController = TextEditingController();
   final TextEditingController _minRoomsController = TextEditingController();
   final TextEditingController _maxRoomsController = TextEditingController();
+
+  // Configurações de encontros para ocupantes
+  TerrainType _selectedTerrain = TerrainType.subterranean;
+  DifficultyLevel _selectedDifficulty = DifficultyLevel.medium;
+  PartyLevel _selectedPartyLevel = PartyLevel.beginners;
+  bool _useEncounterTables = false;
 
   // Mapa com descrições das armadilhas
   static const Map<String, String> _trapDescriptions = {
@@ -74,8 +80,26 @@ class _DungeonPageState extends State<DungeonPage> {
       customRoomCount: _customRoomCount > 0 ? _customRoomCount : null,
       minRooms: _minRooms > 0 ? _minRooms : null,
       maxRooms: _maxRooms > 0 ? _maxRooms : null,
+      terrainType: _useEncounterTables ? _selectedTerrain : null,
+      difficultyLevel: _useEncounterTables ? _selectedDifficulty : null,
+      partyLevel: _useEncounterTables ? _selectedPartyLevel : null,
+      useEncounterTables: _useEncounterTables,
     );
     setState(() {});
+  }
+
+  void _regenerateOccupants() {
+    if (!_useEncounterTables) return;
+
+    final generator = DungeonGeneratorRefactored();
+    generator.regenerateOccupants(
+      terrainType: _selectedTerrain,
+      difficultyLevel: _selectedDifficulty,
+      partyLevel: _selectedPartyLevel,
+    );
+
+    // Regenera a masmorra para aplicar os novos ocupantes
+    _generate();
   }
 
   void _showGenerationDialog() {
@@ -148,8 +172,11 @@ class _DungeonPageState extends State<DungeonPage> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info,
-                            color: AppColors.primaryLight, size: 16),
+                        Icon(
+                          Icons.info,
+                          color: AppColors.primaryLight,
+                          size: 16,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Dicas:',
@@ -165,7 +192,8 @@ class _DungeonPageState extends State<DungeonPage> {
                       '• Deixe todos vazios → Usar valor da Tabela 9-1 (aleatório)\n'
                       '• Digite apenas quantidade → Valor fixo de salas\n'
                       '• Use min/max → Intervalo de salas (ex: 3-8 salas)\n'
-                      '• Mínimo e máximo → Aplicam-se ao valor da tabela',
+                      '• Mínimo e máximo → Aplicam-se ao valor da tabela\n'
+                      '• Tabelas A13 → Usar encontros específicos por terreno',
                       style: TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ],
@@ -188,8 +216,9 @@ class _DungeonPageState extends State<DungeonPage> {
               final minRooms = _minRoomsController.text.trim();
               final maxRooms = _maxRoomsController.text.trim();
 
-              _customRoomCount =
-                  roomCount.isEmpty ? 0 : int.tryParse(roomCount) ?? 0;
+              _customRoomCount = roomCount.isEmpty
+                  ? 0
+                  : int.tryParse(roomCount) ?? 0;
               _minRooms = minRooms.isEmpty ? 0 : int.tryParse(minRooms) ?? 0;
               _maxRooms = maxRooms.isEmpty ? 0 : int.tryParse(maxRooms) ?? 0;
 
@@ -199,6 +228,99 @@ class _DungeonPageState extends State<DungeonPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTerrainDropdown() {
+    return DropdownButtonFormField<TerrainType>(
+      value: _selectedTerrain,
+      decoration: const InputDecoration(
+        labelText: 'Terreno',
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white30),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      ),
+      dropdownColor: AppColors.surfaceLight,
+      style: const TextStyle(color: Colors.white, fontSize: 12),
+      items: TerrainType.values.map((terrain) {
+        return DropdownMenuItem(
+          value: terrain,
+          child: Text(terrain.description, style: TextStyle(fontSize: 12)),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedTerrain = value!;
+        });
+      },
+    );
+  }
+
+  Widget _buildDifficultyDropdown() {
+    return DropdownButtonFormField<DifficultyLevel>(
+      value: _selectedDifficulty,
+      decoration: const InputDecoration(
+        labelText: 'Dificuldade',
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white30),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      ),
+      dropdownColor: AppColors.surfaceLight,
+      style: const TextStyle(color: Colors.white, fontSize: 12),
+      items: DifficultyLevel.values
+          .where((difficulty) => !difficulty.name.startsWith('custom'))
+          .map((difficulty) {
+            return DropdownMenuItem(
+              value: difficulty,
+              child: Text(
+                '${difficulty.description} (1d${difficulty.diceSides})',
+                style: TextStyle(fontSize: 12),
+              ),
+            );
+          })
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedDifficulty = value!;
+        });
+      },
+    );
+  }
+
+  Widget _buildPartyLevelDropdown() {
+    return DropdownButtonFormField<PartyLevel>(
+      value: _selectedPartyLevel,
+      decoration: const InputDecoration(
+        labelText: 'Nível do Grupo',
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white30),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      ),
+      dropdownColor: AppColors.surfaceLight,
+      style: const TextStyle(color: Colors.white, fontSize: 12),
+      items: PartyLevel.values.map((level) {
+        return DropdownMenuItem(
+          value: level,
+          child: Text(
+            '${level.description} (${level.levelRange})',
+            style: TextStyle(fontSize: 12),
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedPartyLevel = value!;
+        });
+      },
     );
   }
 
@@ -212,17 +334,22 @@ class _DungeonPageState extends State<DungeonPage> {
               room.index == 1
                   ? Icons.input
                   : room.index == _dungeon.roomsCount
-                      ? Icons.warning
-                      : Icons.room,
+                  ? Icons.warning
+                  : Icons.room,
               color: room.index == 1
                   ? AppColors.primary
                   : room.index == _dungeon.roomsCount
-                      ? AppColors.error
-                      : AppColors.primary,
+                  ? AppColors.error
+                  : AppColors.primary,
             ),
             const SizedBox(width: 8),
             SelectableText(
-                'Sala ${room.index}${room.index == 1 ? ' (Entrada da Masmorra)' : room.index == _dungeon.roomsCount ? ' (Sala do Boss)' : ' (Sala Normal)'}'),
+              'Sala ${room.index}${room.index == 1
+                  ? ' (Entrada da Masmorra)'
+                  : room.index == _dungeon.roomsCount
+                  ? ' (Sala do Boss)'
+                  : ' (Sala Normal)'}',
+            ),
           ],
         ),
         content: SizedBox(
@@ -340,8 +467,10 @@ class _DungeonPageState extends State<DungeonPage> {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline,
-                        color: AppColors.primary),
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: AppColors.primary,
+                    ),
                     tooltip: 'Gerar Nova Masmorra (Configurar parâmetros)',
                     onPressed: _showGenerationDialog,
                   ),
@@ -369,16 +498,10 @@ class _DungeonPageState extends State<DungeonPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Informações da Masmorra - 30%
-        Expanded(
-          flex: 3,
-          child: _buildDungeonInfoCard(),
-        ),
+        Expanded(flex: 3, child: _buildDungeonInfoCard()),
         const SizedBox(width: 16),
         // Lista de Salas - 70%
-        Expanded(
-          flex: 7,
-          child: _buildRoomsGrid(),
-        ),
+        Expanded(flex: 7, child: _buildRoomsGrid()),
       ],
     );
   }
@@ -387,24 +510,114 @@ class _DungeonPageState extends State<DungeonPage> {
     return Column(
       children: [
         // Informações da Masmorra
-        Expanded(
-          flex: 1,
-          child: _buildDungeonInfoCard(),
-        ),
+        Expanded(flex: 1, child: _buildDungeonInfoCard()),
         const SizedBox(height: 16),
         // Lista de Salas
-        Expanded(
-          flex: 2,
-          child: _buildRoomsGrid(),
-        ),
+        Expanded(flex: 2, child: _buildRoomsGrid()),
       ],
     );
   }
 
   Widget _buildDungeonInfoCard() {
-    return DungeonInfoCard(
-      dungeon: _dungeon,
-      showDetails: true,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Card principal da masmorra
+          DungeonInfoCard(dungeon: _dungeon, showDetails: true),
+
+          // Configurações de encontros na lateral
+          const SizedBox(height: 16),
+          _buildEncounterSettingsCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEncounterSettingsCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primaryDark, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.pets, color: AppColors.primaryLight, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                'Configurações de Encontros',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Switch para ativar/desativar
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Usar Tabelas A13 para Ocupantes:',
+                  style: TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+              Switch(
+                value: _useEncounterTables,
+                onChanged: (value) {
+                  setState(() {
+                    _useEncounterTables = value;
+                  });
+                },
+                activeColor: AppColors.primary,
+              ),
+            ],
+          ),
+
+          if (_useEncounterTables) ...[
+            const SizedBox(height: 16),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTerrainDropdown(),
+                    const SizedBox(height: 12),
+                    _buildDifficultyDropdown(),
+                    const SizedBox(height: 12),
+                    _buildPartyLevelDropdown(),
+                    const SizedBox(height: 12),
+
+                    // Botão para regenerar com novas configurações
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _regenerateOccupants,
+                        icon: Icon(Icons.refresh, size: 16),
+                        label: const Text('Regenerar Ocupantes'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -439,9 +652,9 @@ class _DungeonPageState extends State<DungeonPage> {
               SelectableText(
                 'Salas da Masmorra',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryLight,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryLight,
+                ),
               ),
               const Spacer(),
               SelectableText(
@@ -460,8 +673,9 @@ class _DungeonPageState extends State<DungeonPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width < 768 ? 1 : 2,
+                  crossAxisCount: MediaQuery.of(context).size.width < 768
+                      ? 1
+                      : 2,
                   childAspectRatio: 1.2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
@@ -611,8 +825,10 @@ class _DungeonPageState extends State<DungeonPage> {
                 ),
                 if (isEntrance)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
@@ -629,8 +845,10 @@ class _DungeonPageState extends State<DungeonPage> {
                   ),
                 if (isBoss)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.error,
                       borderRadius: BorderRadius.circular(4),
@@ -660,38 +878,68 @@ class _DungeonPageState extends State<DungeonPage> {
                     _buildRoomProperty('Item', room.item, Icons.inventory),
                     if (room.specialItem.isNotEmpty && room.specialItem != '—')
                       _buildRoomProperty(
-                          'Item Especial', room.specialItem, Icons.star),
+                        'Item Especial',
+                        room.specialItem,
+                        Icons.star,
+                      ),
                     if (room.monster1.isNotEmpty && room.monster1 != '—')
                       _buildRoomProperty(
-                          'Monstro', _buildMonsterText(room), Icons.pets),
+                        'Monstro',
+                        _buildMonsterText(room),
+                        Icons.pets,
+                      ),
                     if (room.trap.isNotEmpty && room.trap != '—')
                       _buildRoomProperty(
-                          'Armadilha', room.trap, Icons.dangerous),
+                        'Armadilha',
+                        room.trap,
+                        Icons.dangerous,
+                      ),
                     if (room.specialTrap.isNotEmpty && room.specialTrap != '—')
-                      _buildRoomProperty('Armadilha Especial', room.specialTrap,
-                          Icons.dangerous),
+                      _buildRoomProperty(
+                        'Armadilha Especial',
+                        room.specialTrap,
+                        Icons.dangerous,
+                      ),
                     if (room.roomCommon.isNotEmpty && room.roomCommon != '—')
                       _buildRoomProperty(
-                          'Sala Comum', room.roomCommon, Icons.room),
+                        'Sala Comum',
+                        room.roomCommon,
+                        Icons.room,
+                      ),
                     if (room.roomSpecial.isNotEmpty && room.roomSpecial != '—')
-                      _buildRoomProperty('Sala Especial', room.roomSpecial,
-                          Icons.architecture),
+                      _buildRoomProperty(
+                        'Sala Especial',
+                        room.roomSpecial,
+                        Icons.architecture,
+                      ),
                     if (room.roomSpecial2.isNotEmpty &&
                         room.roomSpecial2 != '—')
                       _buildRoomProperty(
-                          'Sala Especial 2', room.roomSpecial2, Icons.castle),
+                        'Sala Especial 2',
+                        room.roomSpecial2,
+                        Icons.castle,
+                      ),
                     if (room.treasure.isNotEmpty &&
                         room.treasure != 'Nenhum' &&
                         room.treasure != 'Nenhum Tesouro')
                       _buildRoomProperty(
-                          'Tesouro', room.treasure, Icons.diamond),
+                        'Tesouro',
+                        room.treasure,
+                        Icons.diamond,
+                      ),
                     if (room.specialTreasure.isNotEmpty &&
                         room.specialTreasure != '—')
-                      _buildRoomProperty('Tesouro Especial',
-                          room.specialTreasure, Icons.diamond),
+                      _buildRoomProperty(
+                        'Tesouro Especial',
+                        room.specialTreasure,
+                        Icons.diamond,
+                      ),
                     if (room.magicItem.isNotEmpty && room.magicItem != '—')
                       _buildRoomProperty(
-                          'Item Mágico', room.magicItem, Icons.psychology),
+                        'Item Mágico',
+                        room.magicItem,
+                        Icons.psychology,
+                      ),
                   ],
                 ),
               ),

@@ -4,6 +4,7 @@ import '../models/dungeon.dart';
 import '../models/room.dart';
 import '../models/dto/dungeon_generation_dto.dart';
 import '../mappers/dungeon_mapper.dart';
+import '../enums/table_enums.dart';
 import 'dungeon_data_service.dart';
 import 'room_generation_service.dart';
 import 'room_size_calculator.dart';
@@ -19,10 +20,10 @@ class DungeonGeneratorRefactored {
     DungeonDataService? dungeonDataService,
     RoomGenerationService? roomGenerationService,
     RoomSizeCalculator? roomSizeCalculator,
-  })  : _dungeonDataService = dungeonDataService ?? DungeonDataService(),
-        _roomGenerationService =
-            roomGenerationService ?? RoomGenerationService(),
-        _roomSizeCalculator = roomSizeCalculator ?? RoomSizeCalculator();
+  }) : _dungeonDataService = dungeonDataService ?? DungeonDataService(),
+       _roomGenerationService =
+           roomGenerationService ?? RoomGenerationService(),
+       _roomSizeCalculator = roomSizeCalculator ?? RoomSizeCalculator();
 
   /// Gera uma masmorra completa
   Dungeon generate({
@@ -31,9 +32,19 @@ class DungeonGeneratorRefactored {
     int? customRoomCount,
     int? minRooms,
     int? maxRooms,
+    TerrainType? terrainType,
+    DifficultyLevel? difficultyLevel,
+    PartyLevel? partyLevel,
+    bool useEncounterTables = false,
   }) {
     // Gera os dados da masmorra usando a Tabela 9.1
-    final dungeonData = _dungeonDataService.generateDungeonData();
+    final dungeonData = _dungeonDataService.generateDungeonData(
+      level: level,
+      terrainType: terrainType,
+      difficultyLevel: difficultyLevel,
+      partyLevel: partyLevel,
+      useEncounterTables: useEncounterTables,
+    );
 
     // Determina o número de salas
     final roomsCount = _roomSizeCalculator.calculateRoomCount(
@@ -65,5 +76,18 @@ class DungeonGeneratorRefactored {
     }
 
     return rooms;
+  }
+
+  /// Regenera apenas os ocupantes da masmorra usando tabelas A13
+  void regenerateOccupants({
+    required TerrainType terrainType,
+    required DifficultyLevel difficultyLevel,
+    required PartyLevel partyLevel,
+  }) {
+    _dungeonDataService.regenerateOccupants(
+      terrainType: terrainType,
+      difficultyLevel: difficultyLevel,
+      partyLevel: partyLevel,
+    );
   }
 }

@@ -642,6 +642,7 @@ file:///Users/rhuanburle/Documentos/work/dungeon_forge/.dart_tool/flutter_build/
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/app/app_pages.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/app/app_routes.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/constants/image_path.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/enums/dice_enums.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/enums/table_enums.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/main.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/mappers/dungeon_mapper.dart
@@ -669,6 +670,7 @@ file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/base_table.dar
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/deserts_encounter_table.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/dungeon_table.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/extraplanar_table.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/forests_encounter_table.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/glaciers_encounter_table.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/hills_encounter_table.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/tables/humans_table.dart

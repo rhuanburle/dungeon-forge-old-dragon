@@ -19,69 +19,84 @@ class DungeonTable extends TableWithColumnMethods<dynamic> {
 
   @override
   List<List<dynamic>> get columns => [
-        _column1, // DungeonType
-        _column2, // DungeonBuilder
-        _column3, // DungeonStatus
-        _column4, // DungeonObjective
-        _column5, // DungeonTarget
-        _column6, // DungeonTargetStatus
-        _column7, // DungeonLocation
-        _column8, // DungeonEntry
-        _column9, // String (fórmula de tamanho)
-        _column10, // DungeonOccupant
-        _column11, // DungeonOccupant
-        _column12, // DungeonOccupant
-        _column13, // RumorSubject
-        _column14, // RumorAction
-        _column15, // RumorLocation
-      ];
+    _column1, // DungeonType
+    _column2, // DungeonBuilder
+    _column3, // DungeonStatus
+    _column4, // DungeonObjective
+    _column5, // DungeonTarget
+    _column6, // DungeonTargetStatus
+    _column7, // DungeonLocation
+    _column8, // DungeonEntry
+    _column9, // String (fórmula de tamanho)
+    _column10, // DungeonOccupant
+    _column11, // DungeonOccupant
+    _column12, // DungeonOccupant
+    _column13, // RumorSubject
+    _column14, // RumorAction
+    _column15, // RumorLocation
+  ];
 
-  // Coluna 1: Tipo de Masmorra
+  // Coluna 1: Tipo de Masmorra (2d6)
+  // Roll 2-3: Construção Perdida
+  // Roll 4-5: Labirinto Artificial
+  // Roll 6-7: Cavernas Naturais
+  // Roll 8-9: Covil Desabitado
+  // Roll 10-11: Fortaleza Abandonada
+  // Roll 12: Mina Desativada
   static const List<DungeonType> _column1 = [
-    DungeonType.lostConstruction,
-    DungeonType.lostConstruction,
-    DungeonType.artificialLabyrinth,
-    DungeonType.artificialLabyrinth,
-    DungeonType.naturalCaves,
-    DungeonType.naturalCaves,
-    DungeonType.abandonedLair,
-    DungeonType.abandonedLair,
-    DungeonType.abandonedFortress,
-    DungeonType.abandonedFortress,
-    DungeonType.deactivatedMine,
-    DungeonType.deactivatedMine,
+    DungeonType.lostConstruction, // Roll 2
+    DungeonType.lostConstruction, // Roll 3
+    DungeonType.artificialLabyrinth, // Roll 4
+    DungeonType.artificialLabyrinth, // Roll 5
+    DungeonType.naturalCaves, // Roll 6
+    DungeonType.naturalCaves, // Roll 7
+    DungeonType.abandonedLair, // Roll 8
+    DungeonType.abandonedLair, // Roll 9
+    DungeonType.abandonedFortress, // Roll 10
+    DungeonType.abandonedFortress, // Roll 11
+    DungeonType.deactivatedMine, // Roll 12
   ];
 
-  // Coluna 2: Construtor/Habitante
+  // Coluna 2: Construtor/Habitante (2d6)
+  // Roll 2-3: Desconhecido
+  // Roll 4-5: Cultistas
+  // Roll 6-7: Civilização Ancestral
+  // Roll 8-9: Anões
+  // Roll 10-11: Magos
+  // Roll 12: Gigantes
   static const List<DungeonBuilder> _column2 = [
-    DungeonBuilder.unknown,
-    DungeonBuilder.unknown,
-    DungeonBuilder.cultists,
-    DungeonBuilder.cultists,
-    DungeonBuilder.ancestralCivilization,
-    DungeonBuilder.ancestralCivilization,
-    DungeonBuilder.dwarves,
-    DungeonBuilder.dwarves,
-    DungeonBuilder.mages,
-    DungeonBuilder.mages,
-    DungeonBuilder.giants,
-    DungeonBuilder.giants,
+    DungeonBuilder.unknown, // Roll 2
+    DungeonBuilder.unknown, // Roll 3
+    DungeonBuilder.cultists, // Roll 4
+    DungeonBuilder.cultists, // Roll 5
+    DungeonBuilder.ancestralCivilization, // Roll 6
+    DungeonBuilder.ancestralCivilization, // Roll 7
+    DungeonBuilder.dwarves, // Roll 8
+    DungeonBuilder.dwarves, // Roll 9
+    DungeonBuilder.mages, // Roll 10
+    DungeonBuilder.mages, // Roll 11
+    DungeonBuilder.giants, // Roll 12
   ];
 
-  // Coluna 3: Status da Masmorra
+  // Coluna 3: Status da Masmorra (2d6)
+  // Roll 2-3: Amaldiçoados
+  // Roll 4-5: Extintos
+  // Roll 6-7: Ancestrais
+  // Roll 8-9: Desaparecidos
+  // Roll 10-11: Perdidos
+  // Roll 12: em outro local
   static const List<DungeonStatus> _column3 = [
-    DungeonStatus.cursed,
-    DungeonStatus.cursed,
-    DungeonStatus.extinct,
-    DungeonStatus.extinct,
-    DungeonStatus.ancestral,
-    DungeonStatus.ancestral,
-    DungeonStatus.disappeared,
-    DungeonStatus.disappeared,
-    DungeonStatus.lost,
-    DungeonStatus.lost,
-    DungeonStatus.inAnotherLocation,
-    DungeonStatus.inAnotherLocation,
+    DungeonStatus.cursed, // Roll 2
+    DungeonStatus.cursed, // Roll 3
+    DungeonStatus.extinct, // Roll 4
+    DungeonStatus.extinct, // Roll 5
+    DungeonStatus.ancestral, // Roll 6
+    DungeonStatus.ancestral, // Roll 7
+    DungeonStatus.disappeared, // Roll 8
+    DungeonStatus.disappeared, // Roll 9
+    DungeonStatus.lost, // Roll 10
+    DungeonStatus.lost, // Roll 11
+    DungeonStatus.inAnotherLocation, // Roll 12
   ];
 
   // Coluna 4: Objetivo da Construção
@@ -164,20 +179,25 @@ class DungeonTable extends TableWithColumnMethods<dynamic> {
     DungeonEntry.volcanoMouth,
   ];
 
-  // Coluna 9: Fórmula de Tamanho (String)
+  // Coluna 9: Fórmula de Tamanho (2d6)
+  // Roll 2-3: Grande - 3d6+4
+  // Roll 4-5: Média - 2d6+4
+  // Roll 6-7: Pequena - 1d6+4
+  // Roll 8-9: Pequena - 1d6+6
+  // Roll 10-11: Média - 2d6+6
+  // Roll 12: Grande - 3d6+6
   static const List<String> _column9 = [
-    '1d6 + 4 salas',
-    '1d6 + 4 salas',
-    '2d6 + 6 salas',
-    '2d6 + 6 salas',
-    '3d6 + 8 salas',
-    '3d6 + 8 salas',
-    '4d6 + 10 salas',
-    '4d6 + 10 salas',
-    '5d6 + 12 salas',
-    '5d6 + 12 salas',
-    '6d6 + 14 salas',
-    '6d6 + 14 salas',
+    '3d6 + 4 salas', // Roll 2 - Grande
+    '3d6 + 4 salas', // Roll 3 - Grande
+    '2d6 + 4 salas', // Roll 4 - Média
+    '2d6 + 4 salas', // Roll 5 - Média
+    '1d6 + 4 salas', // Roll 6 - Pequena
+    '1d6 + 4 salas', // Roll 7 - Pequena
+    '1d6 + 6 salas', // Roll 8 - Pequena
+    '1d6 + 6 salas', // Roll 9 - Pequena
+    '2d6 + 6 salas', // Roll 10 - Média
+    '2d6 + 6 salas', // Roll 11 - Média
+    '3d6 + 6 salas', // Roll 12 - Grande
   ];
 
   // Coluna 10: Ocupante I

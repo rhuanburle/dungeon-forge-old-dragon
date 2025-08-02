@@ -82,10 +82,16 @@ class _EncountersPageState extends State<EncountersPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Painel de Configuração - 40%
-        Expanded(flex: 4, child: _buildConfigurationPanel(isMobile)),
+        Expanded(
+          flex: 4,
+          child: _buildConfigurationPanel(isMobile),
+        ),
         const SizedBox(width: 16),
         // Painel de Resultado - 60%
-        Expanded(flex: 6, child: _buildResultPanel(isMobile)),
+        Expanded(
+          flex: 6,
+          child: _buildResultPanel(isMobile),
+        ),
       ],
     );
   }
@@ -94,10 +100,16 @@ class _EncountersPageState extends State<EncountersPage> {
     return Column(
       children: [
         // Painel de Configuração
-        Expanded(flex: 1, child: _buildConfigurationPanel(isMobile)),
+        Expanded(
+          flex: 1,
+          child: _buildConfigurationPanel(isMobile),
+        ),
         const SizedBox(height: 16),
         // Painel de Resultado
-        Expanded(flex: 1, child: _buildResultPanel(isMobile)),
+        Expanded(
+          flex: 1,
+          child: _buildResultPanel(isMobile),
+        ),
       ],
     );
   }
@@ -127,10 +139,10 @@ class _EncountersPageState extends State<EncountersPage> {
               Text(
                 'Configuração do Encontro',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: isMobile ? 15 : null,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      fontSize: isMobile ? 15 : null,
+                    ),
               ),
             ],
           ),
@@ -176,9 +188,8 @@ class _EncountersPageState extends State<EncountersPage> {
                     width: double.infinity,
                     child: ActionButton(
                       text: _isGenerating ? 'Gerando...' : 'Gerar Encontro',
-                      icon: _isGenerating
-                          ? Icons.hourglass_empty
-                          : Icons.casino,
+                      icon:
+                          _isGenerating ? Icons.hourglass_empty : Icons.casino,
                       onPressed: _isGenerating ? null : _generateEncounter,
                     ),
                   ),
@@ -245,14 +256,12 @@ class _EncountersPageState extends State<EncountersPage> {
           items: DifficultyLevel.values
               .where((difficulty) => !difficulty.name.startsWith('custom'))
               .map((difficulty) {
-                return DropdownMenuItem(
-                  value: difficulty,
-                  child: Text(
-                    '${difficulty.description} (1d${difficulty.diceSides})',
-                  ),
-                );
-              })
-              .toList(),
+            return DropdownMenuItem(
+              value: difficulty,
+              child:
+                  Text('${difficulty.description} (1d${difficulty.diceSides})'),
+            );
+          }).toList(),
           onChanged: (value) {
             setState(() {
               _selectedDifficulty = value!;
@@ -348,8 +357,8 @@ class _EncountersPageState extends State<EncountersPage> {
                 color: _quantityAdjustment == 0
                     ? AppColors.success
                     : _quantityAdjustment > 0
-                    ? AppColors.primaryDark
-                    : AppColors.warning,
+                        ? AppColors.primaryDark
+                        : AppColors.warning,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppColors.border),
               ),
@@ -400,10 +409,10 @@ class _EncountersPageState extends State<EncountersPage> {
               Text(
                 'Encontro Gerado',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryLight,
-                  fontSize: isMobile ? 15 : null,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryLight,
+                      fontSize: isMobile ? 15 : null,
+                    ),
               ),
             ],
           ),
@@ -423,16 +432,26 @@ class _EncountersPageState extends State<EncountersPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.casino, size: 64, color: AppColors.primaryLight),
+          Icon(
+            Icons.casino,
+            size: 64,
+            color: AppColors.primaryLight,
+          ),
           const SizedBox(height: 16),
           Text(
             'Configure os parâmetros e gere um encontro',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'O resultado aparecerá aqui',
-            style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
+            style: TextStyle(
+              color: AppColors.textTertiary,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
@@ -447,65 +466,53 @@ class _EncountersPageState extends State<EncountersPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildResultCard('Informações do Encontro', Icons.info, [
-            _buildResultRow(
-              'Terreno',
-              encounter.terrainType.description,
-              isMobile,
-            ),
-            _buildResultRow(
-              'Dificuldade',
-              encounter.difficultyLevel.description,
-              isMobile,
-            ),
-            _buildResultRow(
-              'Nível do Grupo',
-              encounter.partyLevel.description,
-              isMobile,
-            ),
-            _buildResultRow(
-              'Monstro',
-              encounter.monsterType.description,
-              isMobile,
-            ),
-            _buildResultRow(
-              'Quantidade Original',
-              encounter.quantity.toString(),
-              isMobile,
-            ),
-            _buildResultRow(
-              'Quantidade Ajustada',
-              adjustedQuantity.toString(),
-              isMobile,
-            ),
-            _buildResultRow(
-              'Tipo',
-              encounter.isSolitary ? 'Solitário' : 'Grupo',
-              isMobile,
-            ),
-          ], isMobile),
+          _buildResultCard(
+            'Informações do Encontro',
+            Icons.info,
+            [
+              _buildResultRow(
+                  'Terreno', encounter.terrainType.description, isMobile),
+              _buildResultRow('Dificuldade',
+                  encounter.difficultyLevel.description, isMobile),
+              _buildResultRow(
+                  'Nível do Grupo', encounter.partyLevel.description, isMobile),
+              _buildResultRow(
+                  'Monstro', encounter.monsterType.description, isMobile),
+              _buildResultRow('Quantidade Original',
+                  encounter.quantity.toString(), isMobile),
+              _buildResultRow(
+                  'Quantidade Ajustada', adjustedQuantity.toString(), isMobile),
+              _buildResultRow('Tipo',
+                  encounter.isSolitary ? 'Solitário' : 'Grupo', isMobile),
+            ],
+            isMobile,
+          ),
           const SizedBox(height: 16),
-          _buildResultCard('Descrição do Encontro', Icons.description, [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceLight,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Text(
-                encounter.generateDescriptionWithAdjustment(
-                  _quantityAdjustment,
+          _buildResultCard(
+            'Descrição do Encontro',
+            Icons.description,
+            [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border),
                 ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+                child: Text(
+                  encounter
+                      .generateDescriptionWithAdjustment(_quantityAdjustment),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-          ], isMobile),
+            ],
+            isMobile,
+          ),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -532,11 +539,7 @@ class _EncountersPageState extends State<EncountersPage> {
   }
 
   Widget _buildResultCard(
-    String title,
-    IconData icon,
-    List<Widget> children,
-    bool isMobile,
-  ) {
+      String title, IconData icon, List<Widget> children, bool isMobile) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

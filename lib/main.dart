@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
         fontFamily: 'monospace',
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: const Color(0xFF2a2a2a),
           surfaceTintColor: Colors.transparent,
           elevation: 8,
@@ -53,22 +53,22 @@ class MyApp extends StatelessWidget {
           fillColor: const Color(0xFF1a1a1a),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.amber.shade700),
+            borderSide: BorderSide(color: AppColors.primaryDark),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.amber.shade700),
+            borderSide: BorderSide(color: AppColors.primaryDark),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Colors.amber, width: 2),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
           hintStyle: TextStyle(color: Colors.grey.shade400),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.amber.shade700,
-            foregroundColor: Colors.black,
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
             elevation: 4,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: Colors.amber,
+            foregroundColor: AppColors.primary,
           ),
         ),
       ),

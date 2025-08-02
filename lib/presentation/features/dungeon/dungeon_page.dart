@@ -89,7 +89,7 @@ class _DungeonPageState extends State<DungeonPage> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.add_circle_outline, color: Colors.amber.shade700),
+            Icon(Icons.add_circle_outline, color: AppColors.primaryDark),
             const SizedBox(width: 8),
             const Text('Gerar Nova Masmorra'),
           ],
@@ -139,9 +139,9 @@ class _DungeonPageState extends State<DungeonPage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.amber.shade900.withOpacity(0.3),
+                  color: AppColors.primaryDark.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.amber.shade700),
+                  border: Border.all(color: AppColors.primaryDark),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,13 +149,13 @@ class _DungeonPageState extends State<DungeonPage> {
                     Row(
                       children: [
                         Icon(Icons.info,
-                            color: Colors.amber.shade400, size: 16),
+                            color: AppColors.primaryLight, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           'Dicas:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.amber.shade400,
+                            color: AppColors.primaryLight,
                           ),
                         ),
                       ],
@@ -215,10 +215,10 @@ class _DungeonPageState extends State<DungeonPage> {
                       ? Icons.warning
                       : Icons.room,
               color: room.index == 1
-                  ? Colors.amber
+                  ? AppColors.primary
                   : room.index == _dungeon.roomsCount
-                      ? Colors.red
-                      : Colors.blue,
+                      ? AppColors.error
+                      : AppColors.primary,
             ),
             const SizedBox(width: 8),
             SelectableText(
@@ -276,7 +276,7 @@ class _DungeonPageState extends State<DungeonPage> {
             label,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.amber.shade400,
+              color: AppColors.primaryLight,
               fontSize: 12,
             ),
           ),
@@ -415,7 +415,7 @@ class _DungeonPageState extends State<DungeonPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF2a2a2a),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.shade700, width: 2),
+        border: Border.all(color: AppColors.primaryDark, width: 2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.3),
@@ -433,27 +433,27 @@ class _DungeonPageState extends State<DungeonPage> {
                 ImagePath.treasure,
                 width: 24,
                 height: 24,
-                color: Colors.amber.shade400,
+                color: AppColors.primaryLight,
               ),
               const SizedBox(width: 8),
               SelectableText(
                 'Salas da Masmorra',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber.shade400,
+                      color: AppColors.primaryLight,
                     ),
               ),
               const Spacer(),
               SelectableText(
                 '${_dungeon.rooms.length} salas',
                 style: TextStyle(
-                  color: Colors.amber.shade300,
+                  color: AppColors.primaryLight,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-          const Divider(height: 24, color: Colors.amber),
+          const Divider(height: 24, color: AppColors.primary),
           Expanded(
             child: SingleChildScrollView(
               child: GridView.builder(
@@ -486,12 +486,12 @@ class _DungeonPageState extends State<DungeonPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.amber.shade600),
+        border: Border.all(color: AppColors.primaryLight),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: Colors.amber.shade400),
+          Icon(icon, size: 20, color: AppColors.primaryLight),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -501,7 +501,7 @@ class _DungeonPageState extends State<DungeonPage> {
                   label,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber.shade300,
+                    color: AppColors.primaryLight,
                     fontSize: 12,
                   ),
                 ),
@@ -528,9 +528,9 @@ class _DungeonPageState extends State<DungeonPage> {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: Colors.amber.shade600,
+              color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.amber.shade400),
+              border: Border.all(color: AppColors.primaryLight),
             ),
             child: Center(
               child: Text(
@@ -560,19 +560,19 @@ class _DungeonPageState extends State<DungeonPage> {
     final isBoss = room.index == _dungeon.roomsCount;
 
     Color cardColor = const Color(0xFF3a3a3a);
-    Color borderColor = Colors.amber.shade600;
-    Color headerColor = Colors.amber.shade400;
+    Color borderColor = AppColors.primaryLight;
+    Color headerColor = AppColors.primaryLight;
     IconData roomIcon = Icons.room;
 
     if (isEntrance) {
       cardColor = const Color(0xFF4a3a2a);
-      borderColor = Colors.amber.shade500;
-      headerColor = Colors.amber.shade300;
+      borderColor = AppColors.primary;
+      headerColor = AppColors.primary;
       roomIcon = Icons.input;
     } else if (isBoss) {
       cardColor = const Color(0xFF3a2a2a);
-      borderColor = Colors.red.shade600;
-      headerColor = Colors.red.shade400;
+      borderColor = AppColors.error;
+      headerColor = AppColors.error;
       roomIcon = Icons.warning;
     }
 
@@ -614,9 +614,9 @@ class _DungeonPageState extends State<DungeonPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.amber.shade600,
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.amber.shade400),
+                      border: Border.all(color: AppColors.primary),
                     ),
                     child: const Text(
                       'ENTRADA',
@@ -632,9 +632,9 @@ class _DungeonPageState extends State<DungeonPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade600,
+                      color: AppColors.error,
                       borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.red.shade400),
+                      border: Border.all(color: AppColors.error),
                     ),
                     child: const Text(
                       'BOSS',
@@ -733,7 +733,7 @@ class _DungeonPageState extends State<DungeonPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 14, color: Colors.amber.shade400),
+          Icon(icon, size: 14, color: AppColors.primaryLight),
           const SizedBox(width: 6),
           Expanded(
             child: Column(
@@ -744,7 +744,7 @@ class _DungeonPageState extends State<DungeonPage> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber.shade300,
+                    color: AppColors.primaryLight,
                   ),
                 ),
                 SelectableText(

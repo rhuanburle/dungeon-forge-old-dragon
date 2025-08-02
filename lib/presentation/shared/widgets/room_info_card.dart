@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../../models/room.dart';
+import '../../../theme/app_colors.dart';
 import 'responsive_layout.dart';
 
 /// Widget reutilizável para exibir informações de uma sala
@@ -155,7 +156,7 @@ class RoomInfoCard extends StatelessWidget {
           'Tesouro:',
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.amber[700],
+                color: AppColors.primary,
               ),
         ),
         if (room.treasure.isNotEmpty) _buildInfoRow('Tesouro', room.treasure),

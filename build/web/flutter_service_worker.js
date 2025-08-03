@@ -3,11 +3,11 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "cbb6e626eae8f869ff9fd7b84840a4ad",
+const RESOURCES = {"flutter_bootstrap.js": "2b443745e822d98db740182ae116ce00",
 "version.json": "c1b97bb9bf76c0ae310ac945e91e5a12",
 "index.html": "7b91253229a2445c993da4b2dc732f48",
 "/": "7b91253229a2445c993da4b2dc732f48",
-"main.dart.js": "ab7bc2d42cf549e5d695e8d29e8c2eb5",
+"main.dart.js": "01461f7f4bd0f0646b5da01d9f059f2c",
 "flutter.js": "83d881c1dbb6d6bcd6b42e274605b69c",
 "favicon.png": "914996115986fbeaf673721c816a9a94",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
@@ -23,7 +23,7 @@ const RESOURCES = {"flutter_bootstrap.js": "cbb6e626eae8f869ff9fd7b84840a4ad",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "33b7d9392238c04c131b6ce224e13711",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
 "assets/AssetManifest.bin": "96369f960c53f66c858d5e8ed970e19e",
-"assets/fonts/MaterialIcons-Regular.otf": "98a979063f75b6af7fcc5098f25b2ea5",
+"assets/fonts/MaterialIcons-Regular.otf": "fc86d2087081f1fe0cad72f088066c07",
 "assets/assets/images/armadilha.png": "527076f1f4fa248c8b9be0353284e704",
 "assets/assets/images/mochila.png": "914996115986fbeaf673721c816a9a94",
 "assets/assets/images/escudo-redondo.png": "b107965dcd481f51dda56e92fa7b591e",

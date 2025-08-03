@@ -656,6 +656,7 @@ file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/features
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/action_button.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/custom_text_field.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/dungeon_info_card.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/navigable_room_card.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/responsive_layout.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/dungeon_data_service.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/dungeon_generator_refactored.dart

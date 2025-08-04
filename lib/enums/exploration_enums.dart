@@ -268,3 +268,85 @@ enum SettlementType {
   const SettlementType(this.description);
   final String description;
 }
+
+/// ========================================
+/// ENUMS PARA GUARDIÕES (Tabela A1.1)
+/// ========================================
+
+/// Enum para representar tipos de guardiões
+enum GuardianType {
+  none('Nenhum'),
+  traps('Armadilhas'),
+  giants('Gigantes'),
+  undead('Mortos-Vivos'),
+  others('Outros'),
+  dragons('Dragões');
+
+  const GuardianType(this.description);
+  final String description;
+}
+
+/// Enum para representar tipos de armadilhas
+enum TrapType {
+  poisonedDarts('Dardos envenenados'),
+  pitWithStakes('Fosso com estacas'),
+  fallingBlock('O bloco que cai'),
+  hiddenGuillotine('Guilhotina oculta'),
+  acidSpray('Spray ácido'),
+  retractableCeiling('Teto retrátil');
+
+  const TrapType(this.description);
+  final String description;
+}
+
+/// Enum para representar tipos de gigantes
+enum GiantType {
+  ettin('Ettin'),
+  hillGiant('Gigante da Colina'),
+  mountainGiant('Gigante da Montanha'),
+  stormGiant('Gigante da Tempestade'),
+  fireGiant('Gigante do Fogo'),
+  iceGiant('Gigante do Gelo');
+
+  const GiantType(this.description);
+  final String description;
+}
+
+/// Enum para representar tipos de mortos-vivos
+enum UndeadType {
+  specter('Espectro'),
+  ghost('Fantasma'),
+  banshee('Banshee'),
+  mummy('Múmia'),
+  vampire('Vampiro'),
+  lich('Lich');
+
+  const UndeadType(this.description);
+  final String description;
+}
+
+/// Enum para representar tipos de outros guardiões
+enum OtherGuardianType {
+  cerberus('Cérbero'),
+  sphinx('Esfinge'),
+  efreeti('Efreeti'),
+  ironGolem('Golem de Ferro'),
+  blackPudding('Pudim Negro'),
+  shoggoth('Shoggoth');
+
+  const OtherGuardianType(this.description);
+  final String description;
+}
+
+/// Enum para representar tipos de dragões
+enum DragonType {
+  blueDragon('Dragão Azul'),
+  whiteDragon('Dragão Branco'),
+  goldDragon('Dragão Dourado'),
+  blackDragon('Dragão Negro'),
+  greenDragon('Dragão Verde'),
+  redDragon('Dragão Vermelho');
+
+  const DragonType(this.description);
+  final String description;
+}

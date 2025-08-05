@@ -643,15 +643,18 @@ file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/app/app_pages.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/app/app_routes.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/constants/image_path.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/enums/dice_enums.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/enums/exploration_enums.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/enums/table_enums.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/main.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/mappers/dungeon_mapper.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/models/dto/dungeon_generation_dto.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/models/dungeon.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/models/encounter_generation.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/models/exploration.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/models/room.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/features/dungeon/dungeon_page.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/features/encounters/encounters_page.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/features/ermos/ermos_page.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/features/main/main_page.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/action_button.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/widgets/custom_text_field.dart
@@ -661,6 +664,7 @@ file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/presentation/shared/w
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/dungeon_data_service.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/dungeon_generator_refactored.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/encounter_generation_service.dart
+file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/exploration_service.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/old_dragon_api_service.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/room_generation_service.dart
 file:///Users/rhuanburle/Documentos/work/dungeon_forge/lib/services/room_size_calculator.dart

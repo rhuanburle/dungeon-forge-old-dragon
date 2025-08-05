@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import '../dungeon/dungeon_page.dart';
 import '../encounters/encounters_page.dart';
+import '../ermos/ermos_page.dart';
 import '../../../constants/image_path.dart';
 import '../../../theme/app_colors.dart';
 
@@ -19,6 +20,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const DungeonPage(),
     const EncountersPage(),
+    const ErmosPage(),
   ];
 
   final List<NavigationItem> _navigationItems = [
@@ -32,6 +34,7 @@ class _MainPageState extends State<MainPage> {
       icon: Icons.shield,
       page: const EncountersPage(),
     ),
+    NavigationItem(title: 'Ermos', icon: Icons.forest, page: const ErmosPage()),
   ];
 
   @override
@@ -40,9 +43,7 @@ class _MainPageState extends State<MainPage> {
       body: Column(
         children: [
           _buildResponsiveNavigation(),
-          Expanded(
-            child: _pages[_currentIndex],
-          ),
+          Expanded(child: _pages[_currentIndex]),
         ],
       ),
     );
@@ -57,14 +58,13 @@ class _MainPageState extends State<MainPage> {
 
         return Container(
           padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 16 : 24, vertical: isMobile ? 12 : 16),
+            horizontal: isMobile ? 16 : 24,
+            vertical: isMobile ? 12 : 16,
+          ),
           decoration: BoxDecoration(
             color: AppColors.surface,
             border: Border(
-              bottom: BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
+              bottom: BorderSide(color: AppColors.border, width: 1),
             ),
           ),
           child: isMobile
@@ -119,7 +119,8 @@ class _MainPageState extends State<MainPage> {
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
-                    right: index < _navigationItems.length - 1 ? 8 : 0),
+                  right: index < _navigationItems.length - 1 ? 8 : 0,
+                ),
                 child: _buildMobileNavigationButton(item, index, isSelected),
               ),
             );
@@ -248,7 +249,9 @@ class _MainPageState extends State<MainPage> {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 12 : 16, vertical: isTablet ? 10 : 12),
+            horizontal: isTablet ? 12 : 16,
+            vertical: isTablet ? 10 : 12,
+          ),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.selected : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
@@ -290,9 +293,5 @@ class NavigationItem {
   final IconData icon;
   final Widget page;
 
-  NavigationItem({
-    required this.title,
-    required this.icon,
-    required this.page,
-  });
+  NavigationItem({required this.title, required this.icon, required this.page});
 }

@@ -3,11 +3,15 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
+<<<<<<< HEAD
 const RESOURCES = {"flutter_bootstrap.js": "07a34af4a44f0d5bee02e6782d7cfe2f",
+=======
+const RESOURCES = {"flutter_bootstrap.js": "18cdad194d7f464499548e2e5a047e53",
+>>>>>>> feature/ermos
 "version.json": "c1b97bb9bf76c0ae310ac945e91e5a12",
 "index.html": "7b91253229a2445c993da4b2dc732f48",
 "/": "7b91253229a2445c993da4b2dc732f48",
-"main.dart.js": "2a2d1141893aac2a800ea3d1d610fcdf",
+"main.dart.js": "61165970f69e356679943e08ea68f906",
 "flutter.js": "83d881c1dbb6d6bcd6b42e274605b69c",
 "favicon.png": "914996115986fbeaf673721c816a9a94",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
@@ -23,7 +27,7 @@ const RESOURCES = {"flutter_bootstrap.js": "07a34af4a44f0d5bee02e6782d7cfe2f",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "33b7d9392238c04c131b6ce224e13711",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
 "assets/AssetManifest.bin": "96369f960c53f66c858d5e8ed970e19e",
-"assets/fonts/MaterialIcons-Regular.otf": "fc86d2087081f1fe0cad72f088066c07",
+"assets/fonts/MaterialIcons-Regular.otf": "d0fc0ed8e77dedbda1a525098b39f0a4",
 "assets/assets/images/armadilha.png": "527076f1f4fa248c8b9be0353284e704",
 "assets/assets/images/mochila.png": "914996115986fbeaf673721c816a9a94",
 "assets/assets/images/escudo-redondo.png": "b107965dcd481f51dda56e92fa7b591e",

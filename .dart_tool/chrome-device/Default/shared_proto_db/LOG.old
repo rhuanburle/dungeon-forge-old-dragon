@@ -1,17 +1,14 @@
-<<<<<<< HEAD
-2025/08/03-15:01:35.532 5c6a2 Reusing MANIFEST /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.14I46u/flutter_tools_chrome_device.a6kf1y/Default/shared_proto_db/MANIFEST-000001
-2025/08/03-15:01:35.532 5c6a2 Recovering log #7
-2025/08/03-15:01:35.532 5c6a2 Reusing old log /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.14I46u/flutter_tools_chrome_device.a6kf1y/Default/shared_proto_db/000007.log 
-2025/08/03-15:01:35.532 5c6a2 Delete type=0 #4
-2025/08/03-15:01:35.532 5c6a2 Delete type=0 #3
-=======
-2025/08/05-11:34:28.870 4d2a1 Reusing MANIFEST /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.xMPyGk/flutter_tools_chrome_device.1ZJxsK/Default/shared_proto_db/MANIFEST-000001
-2025/08/05-11:34:28.870 4d2a1 Recovering log #15
-2025/08/05-11:34:28.871 4d2a1 Reusing old log /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.xMPyGk/flutter_tools_chrome_device.1ZJxsK/Default/shared_proto_db/000015.log 
-2025/08/05-11:34:28.871 4d2a1 Delete type=0 #13
-2025/08/05-11:34:28.871 4d2a1 Delete type=0 #7
-2025/08/05-11:34:28.871 4d2a1 Delete type=0 #4
-2025/08/05-11:34:28.872 4d2a1 Delete type=0 #10
-2025/08/05-11:34:28.872 4d2a1 Delete type=0 #3
-2025/08/05-11:34:28.872 4d2a1 Delete type=2 #14
->>>>>>> feature/ermos
+2025/08/05-11:49:33.222 532e3 Reusing MANIFEST /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.Jxo4kF/flutter_tools_chrome_device.5HyZgb/Default/shared_proto_db/MANIFEST-000001
+2025/08/05-11:49:33.223 532e3 Recovering log #13
+2025/08/05-11:49:33.224 532e3 Level-0 table #15: started
+2025/08/05-11:49:33.229 532e3 Level-0 table #15: 118719 bytes OK
+2025/08/05-11:49:33.229 532e3 Recovering log #15
+2025/08/05-11:49:33.231 532e3 Reusing old log /private/var/folders/5r/3h3h_cnj19bb5b9ykp6vt8v80000gn/T/flutter_tools.Jxo4kF/flutter_tools_chrome_device.5HyZgb/Default/shared_proto_db/000015.log 
+2025/08/05-11:49:33.259 532e3 Delete type=0 #13
+2025/08/05-11:49:33.259 532e3 Delete type=0 #7
+2025/08/05-11:49:33.259 532e3 Delete type=0 #4
+2025/08/05-11:49:33.260 532e3 Delete type=0 #10
+2025/08/05-11:49:33.260 532e3 Delete type=0 #3
+2025/08/05-11:49:33.260 532e3 Delete type=2 #14
+2025/08/05-11:49:33.260 532e3 Delete type=2 #16
+2025/08/05-11:49:33.260 532e3 Delete type=2 #13

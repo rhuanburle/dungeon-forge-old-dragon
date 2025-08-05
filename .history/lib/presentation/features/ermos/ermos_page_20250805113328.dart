@@ -1,0 +1,1353 @@
+// presentation/features/ermos/ermos_page.dart
+
+import 'package:flutter/material.dart';
+import '../../../theme/app_colors.dart';
+import '../../../services/exploration_service.dart';
+import '../../../models/exploration.dart';
+import '../../../enums/exploration_enums.dart';
+import '../../../enums/table_enums.dart';
+import '../../../constants/image_path.dart';
+
+class ErmosPage extends StatefulWidget {
+  const ErmosPage({super.key});
+
+  @override
+  State<ErmosPage> createState() => _ErmosPageState();
+}
+
+class _ErmosPageState extends State<ErmosPage> {
+  final ExplorationService _explorationService = ExplorationService();
+
+  // Configurações de exploração
+  bool _isWilderness = true;
+  bool _useManualSelection = false;
+  DiscoveryType? _selectedDiscoveryType;
+
+  // Configurações de tipo de HEX para Rios, Estradas e Ilhas
+  bool _isOcean = false;
+  bool _hasRiver = false;
+
+  // Resultados atuais
+  ExplorationResult? _currentResult;
+  AncestralDiscovery? _ancestralDiscovery;
+  Ruin? _ruin;
+  Lair? _lair;
+  RiversRoadsIslands? _riversRoadsIslands;
+  CastleFort? _castleFort;
+  TempleSanctuary? _templeSanctuary;
+  NaturalDanger? _naturalDanger;
+  Civilization? _civilization;
+  // NestCampTribe? _nestCampTribe; // Comentado até implementar o modelo
+
+  // Histórico de explorações
+  final List<ExplorationResult> _explorationHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _exploreHex();
+  }
+
+  void _exploreHex() {
+    setState(() {
+      // Limpar resultados anteriores
+      _clearResults();
+
+      // Gerar nova exploração
+      if (_useManualSelection && _selectedDiscoveryType != null) {
+        _currentResult = _explorationService.exploreHexWithType(
+          _selectedDiscoveryType!,
+        );
+      } else {
+        _currentResult = _explorationService.exploreHex(
+          isWilderness: _isWilderness,
+        );
+      }
+
+      // Se houve descoberta, gerar detalhes completos
+      if (_currentResult!.hasDiscovery) {
+        _generateDetailedDiscovery();
+      }
+
+      // Adicionar ao histórico
+      _explorationHistory.insert(0, _currentResult!);
+      if (_explorationHistory.length > 10) {
+        _explorationHistory.removeLast();
+      }
+    });
+  }
+
+  void _generateDetailedDiscovery() {
+    switch (_currentResult!.discoveryType) {
+      case DiscoveryType.ancestralDiscoveries:
+        _ancestralDiscovery = _explorationService
+            .generateDetailedAncestralDiscovery();
+        break;
+      case DiscoveryType.lairs:
+        _lair = _explorationService.generateLair();
+        break;
+      case DiscoveryType.riversRoadsIslands:
+        _riversRoadsIslands = _explorationService.generateRiversRoadsIslands(
+          isOcean: _isOcean,
+          hasRiver: _hasRiver,
+        );
+        break;
+      case DiscoveryType.castlesForts:
+        _castleFort = _explorationService.generateCastleFort();
+        break;
+      case DiscoveryType.templesSanctuaries:
+        _templeSanctuary = _explorationService
+            .generateDetailedTempleSanctuary();
+        break;
+      case DiscoveryType.naturalDangers:
+        _naturalDanger = _explorationService.generateNaturalDanger(
+          TerrainType.forests,
+        );
+        break;
+      case DiscoveryType.civilization:
+        _civilization = _explorationService.generateCivilization();
+        break;
+      case null:
+        throw UnimplementedError();
+    }
+  }
+
+  void _clearResults() {
+    _ancestralDiscovery = null;
+    _ruin = null;
+    _lair = null;
+    _riversRoadsIslands = null;
+    _castleFort = null;
+    _templeSanctuary = null;
+    _naturalDanger = null;
+    _civilization = null;
+    // _nestCampTribe = null;
+  }
+
+  // Método removido - configurações agora estão na tela principal
+
+  Widget _buildAreaTypeButton(String label, bool isWilderness, bool isMobile) {
+    final isSelected = _isWilderness == isWilderness;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isWilderness = isWilderness;
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: isMobile ? 8 : 12),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.selected : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: isSelected
+                ? Border.all(color: AppColors.primary, width: 1)
+                : Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? AppColors.textPrimary
+                  : AppColors.textSecondary,
+              fontSize: isMobile ? 11 : 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExplorationModeButton(
+    String label,
+    bool isManual,
+    bool isMobile,
+  ) {
+    final isSelected = _useManualSelection == isManual;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _useManualSelection = isManual;
+            if (!isManual) {
+              _selectedDiscoveryType = null;
+            }
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: isMobile ? 8 : 12),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.selected : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: isSelected
+                ? Border.all(color: AppColors.primary, width: 1)
+                : Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? AppColors.textPrimary
+                  : AppColors.textSecondary,
+              fontSize: isMobile ? 11 : 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHexTypeButton(
+    String label,
+    bool isOcean,
+    bool hasRiver,
+    bool isMobile,
+  ) {
+    final isSelected = (_isOcean == isOcean && _hasRiver == hasRiver);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isOcean = isOcean;
+            _hasRiver = hasRiver;
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: isMobile ? 8 : 12),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.selected : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: isSelected
+                ? Border.all(color: AppColors.primary, width: 1)
+                : Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? AppColors.textPrimary
+                  : AppColors.textSecondary,
+              fontSize: isMobile ? 11 : 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiscoveryTypeDropdown(bool isMobile) {
+    return DropdownButtonFormField<DiscoveryType>(
+      value: _selectedDiscoveryType,
+      decoration: InputDecoration(
+        labelText: 'Selecione o tipo de descoberta',
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.primary),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: isMobile ? 12 : 16,
+        ),
+      ),
+      dropdownColor: AppColors.surfaceLight,
+      style: const TextStyle(color: Colors.white, fontSize: 12),
+      items: DiscoveryType.values.map((type) {
+        return DropdownMenuItem<DiscoveryType>(
+          value: type,
+          child: Text(
+            type.description,
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedDiscoveryType = value;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Selecione um tipo de descoberta';
+        }
+        return null;
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
+    return Container(
+      color: AppColors.background,
+      child: Padding(
+        padding: EdgeInsets.all(isMobile ? 8 : 16),
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border, width: 1),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.forest, color: AppColors.primary, size: 24),
+                  const SizedBox(width: 8),
+                  const SelectableText(
+                    'Exploração dos Ermos',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Configurações agora estão na tela principal
+                  IconButton(
+                    icon: Icon(Icons.refresh, color: AppColors.primary),
+                    tooltip: 'Explorar Novo Hex',
+                    onPressed: _exploreHex,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.history, color: AppColors.primary),
+                    tooltip: 'Limpar Histórico',
+                    onPressed: () {
+                      setState(() {
+                        _explorationHistory.clear();
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Conteúdo principal
+            Expanded(
+              child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Painel de Configuração e Histórico - 40%
+        Expanded(flex: 4, child: _buildConfigurationPanel()),
+        const SizedBox(width: 16),
+        // Painel de Resultado - 60%
+        Expanded(flex: 6, child: _buildResultPanel()),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout() {
+    return Column(
+      children: [
+        // Painel de Configuração
+        Expanded(flex: 1, child: _buildConfigurationPanel()),
+        const SizedBox(height: 16),
+        // Painel de Resultado
+        Expanded(flex: 2, child: _buildResultPanel()),
+      ],
+    );
+  }
+
+  Widget _buildConfigurationPanel() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Configurações de exploração
+          _buildExplorationSettingsCard(),
+          const SizedBox(height: 16),
+          // Configurações atuais
+          _buildCurrentSettingsCard(),
+          const SizedBox(height: 16),
+          // Histórico de explorações
+          _buildExplorationHistoryCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExplorationSettingsCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primaryDark, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.settings, color: AppColors.primaryLight, size: 20),
+              const SizedBox(width: 8),
+              const SelectableText(
+                'Configurações de Exploração',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Tipo de área
+          SelectableText(
+            'Tipo de Área:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryLight,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(child: _buildAreaTypeButton('Selvagem', true, false)),
+              const SizedBox(width: 8),
+              Expanded(child: _buildAreaTypeButton('Civilizada', false, false)),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Modo de exploração
+          SelectableText(
+            'Modo de Exploração:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryLight,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: _buildExplorationModeButton('Aleatório', false, false),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildExplorationModeButton('Manual', true, false),
+              ),
+            ],
+          ),
+
+          if (_useManualSelection) ...[
+            const SizedBox(height: 16),
+            SelectableText(
+              'Tipo de Descoberta:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryLight,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _buildDiscoveryTypeDropdown(false),
+            const SizedBox(height: 8),
+            if (_selectedDiscoveryType != null)
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryDark.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: AppColors.primaryDark),
+                ),
+                child: SelectableText(
+                  'Selecionado: ${_selectedDiscoveryType!.description}',
+                  style: TextStyle(
+                    color: AppColors.primaryLight,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+          ],
+
+          // Configurações específicas para Rios, Estradas e Ilhas
+          if (_selectedDiscoveryType == DiscoveryType.riversRoadsIslands) ...[
+            const SizedBox(height: 16),
+            SelectableText(
+              'Tipo de HEX:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryLight,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildHexTypeButton('Oceano', true, false, false),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildHexTypeButton('Com Rio', false, true, false),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildHexTypeButton('Outro', false, false, false),
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 16),
+
+          // Dicas
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primaryDark.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.primaryDark),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.info, color: AppColors.primaryLight, size: 16),
+                    const SizedBox(width: 4),
+                    SelectableText(
+                      'Dicas:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryLight,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                SelectableText(
+                  '• Selvagem: 1 chance em 1d6 de descobrir algo\n'
+                  '• Civilizada: 1 chance em 1d8 de descobrir algo\n'
+                  '• Aleatório: Tipo de descoberta determinado pelos dados\n'
+                  '• Manual: Escolha o tipo específico de descoberta\n'
+                  '• Todas as descobertas são automaticamente detalhadas',
+                  style: TextStyle(fontSize: 12, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentSettingsCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primaryDark, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.settings, color: AppColors.primaryLight, size: 20),
+              const SizedBox(width: 8),
+              const SelectableText(
+                'Configurações Atuais',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            'Tipo de Área',
+            _isWilderness ? 'Selvagem' : 'Civilizada',
+          ),
+          _buildInfoRow(
+            'Modo de Exploração',
+            _useManualSelection
+                ? 'Manual (Seleção Específica)'
+                : 'Aleatório (Determinado pelos Dados)',
+          ),
+          if (_useManualSelection && _selectedDiscoveryType != null)
+            _buildInfoRow(
+              'Tipo Escolhido',
+              _selectedDiscoveryType!.description,
+            ),
+          _buildInfoRow(
+            'Chance de Descoberta',
+            _isWilderness ? '1 em 1d6' : '1 em 1d8',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExplorationHistoryCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primaryDark, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.history, color: AppColors.primaryLight, size: 20),
+              const SizedBox(width: 8),
+              const SelectableText(
+                'Histórico de Explorações',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (_explorationHistory.isEmpty)
+            SelectableText(
+              'Nenhuma exploração realizada ainda.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            )
+          else
+            ..._explorationHistory
+                .take(5)
+                .map((result) => _buildHistoryItem(result)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryItem(ExplorationResult result) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            result.hasDiscovery ? Icons.explore : Icons.clear,
+            color: result.hasDiscovery
+                ? AppColors.primary
+                : AppColors.textSecondary,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SelectableText(
+              result.hasDiscovery
+                  ? result.discoveryType?.description ?? 'Descoberta'
+                  : 'Nada encontrado',
+              style: TextStyle(
+                color: result.hasDiscovery
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          SelectableText(
+            '$label: ',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+          ),
+          Expanded(
+            child: SelectableText(
+              value,
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultPanel() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Image.asset(
+                ImagePath.treasure,
+                width: 24,
+                height: 24,
+                color: AppColors.primaryLight,
+              ),
+              const SizedBox(width: 8),
+              const SelectableText(
+                'Resultado da Exploração',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 24, color: AppColors.primary),
+          Expanded(
+            child: _currentResult == null
+                ? _buildEmptyState()
+                : _buildExplorationResult(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.explore, size: 64, color: AppColors.textSecondary),
+          const SizedBox(height: 16),
+          SelectableText(
+            'Clique em "Explorar Hex" para começar',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExplorationResult() {
+    if (!_currentResult!.hasDiscovery) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.clear, size: 64, color: AppColors.textSecondary),
+            const SizedBox(height: 16),
+            SelectableText(
+              'Nada foi descoberto nesta exploração.',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            SelectableText(
+              'Tente explorar outro hex.',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Cabeçalho da descoberta
+          _buildDiscoveryHeader(),
+          const SizedBox(height: 16),
+          // Detalhes específicos da descoberta
+          _buildDiscoveryDetails(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiscoveryHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primaryDark.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.primaryDark),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                _getDiscoveryIcon(_currentResult!.discoveryType!),
+                color: AppColors.primaryLight,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              SelectableText(
+                _currentResult!.discoveryType!.description,
+                style: TextStyle(
+                  color: AppColors.primaryLight,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            _currentResult!.description,
+            style: TextStyle(color: Colors.white, fontSize: 14),
+          ),
+          if (_currentResult!.discoveryType ==
+              DiscoveryType.ancestralDiscoveries) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primaryDark.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: AppColors.primaryDark.withOpacity(0.5),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SelectableText(
+                    'Sobre este tipo de descoberta:',
+                    style: TextStyle(
+                      color: AppColors.primaryLight,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    _getAncestralTypeDescription(),
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  IconData _getDiscoveryIcon(DiscoveryType type) {
+    switch (type) {
+      case DiscoveryType.ancestralDiscoveries:
+        return Icons.auto_awesome;
+      case DiscoveryType.lairs:
+        return Icons.home;
+      case DiscoveryType.riversRoadsIslands:
+        return Icons.water;
+      case DiscoveryType.castlesForts:
+        return Icons.fort;
+      case DiscoveryType.templesSanctuaries:
+        return Icons.temple_buddhist;
+      case DiscoveryType.naturalDangers:
+        return Icons.warning;
+      case DiscoveryType.civilization:
+        return Icons.location_city;
+    }
+  }
+
+  Widget _buildDiscoveryDetails() {
+    switch (_currentResult!.discoveryType) {
+      case DiscoveryType.ancestralDiscoveries:
+        return _buildAncestralDetails();
+      case DiscoveryType.lairs:
+        return _buildLairDetails();
+      case DiscoveryType.riversRoadsIslands:
+        return _buildRiversRoadsIslandsDetails();
+      case DiscoveryType.castlesForts:
+        return _buildCastleFortDetails();
+      case DiscoveryType.templesSanctuaries:
+        return _buildTempleSanctuaryDetails();
+      case DiscoveryType.naturalDangers:
+        return _buildNaturalDangerDetails();
+      case DiscoveryType.civilization:
+        return _buildCivilizationDetails();
+      case null:
+        throw UnimplementedError();
+    }
+  }
+
+  Widget _buildAncestralDetails() {
+    if (_ancestralDiscovery == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.auto_awesome, [
+          _buildInfoRow('Tipo', _ancestralDiscovery!.type.description),
+          _buildInfoRow('Condição', _ancestralDiscovery!.condition.description),
+          _buildInfoRow('Material', _ancestralDiscovery!.material.description),
+          _buildInfoRow('Estado', _ancestralDiscovery!.state.description),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Guardião
+        _buildInfoCard('Guardião', Icons.security, [
+          _buildInfoRow('Tipo', _ancestralDiscovery!.guardian.description),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Detalhes Específicos (baseado no tipo)
+        _buildAncestralSpecificDetails(),
+      ],
+    );
+  }
+
+  Widget _buildAncestralSpecificDetails() {
+    switch (_ancestralDiscovery!.type) {
+      case AncestralThingType.ruins:
+        return _buildInfoCard('Detalhes da Ruína', Icons.castle, [
+          _buildInfoRow('Tipo de Construção', _getRuinTypeDetails()),
+          _buildInfoRow('Tamanho', _getRuinSizeDetails()),
+          _buildInfoRow('Defesas', _getRuinDefenseDetails()),
+        ]);
+      case AncestralThingType.relics:
+        return _buildInfoCard('Detalhes da Relíquia', Icons.workspace_premium, [
+          _buildInfoRow('Tipo de Relíquia', _getRelicTypeDetails()),
+          _buildInfoRow('Condição', _getRelicConditionDetails()),
+        ]);
+      case AncestralThingType.objects:
+        return _buildInfoCard('Detalhes do Objeto', Icons.inventory, [
+          _buildInfoRow('Tipo de Objeto', _getObjectTypeDetails()),
+          _buildInfoRow('Subcategoria', _getObjectSubtypeDetails()),
+        ]);
+      case AncestralThingType.vestiges:
+        return _buildInfoCard('Detalhes do Vestígio', Icons.landscape, [
+          _buildInfoRow('Tipo de Vestígio', _getVestigeTypeDetails()),
+          _buildInfoRow('Detalhe Específico', _getVestigeDetailDetails()),
+        ]);
+      case AncestralThingType.ossuaries:
+        return _buildInfoCard('Detalhes da Ossada', Icons.medical_services, [
+          _buildInfoRow('Tipo de Ossada', _getOssuaryTypeDetails()),
+          _buildInfoRow('Tamanho', _getOssuarySizeDetails()),
+        ]);
+      case AncestralThingType.magicalItems:
+        return _buildInfoCard('Detalhes do Item Mágico', Icons.auto_fix_high, [
+          _buildInfoRow('Tipo de Item', _getMagicalItemTypeDetails()),
+          _buildInfoRow('Poder', _getMagicalItemPowerDetails()),
+        ]);
+    }
+  }
+
+  Widget _buildLairDetails() {
+    if (_lair == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.home, [
+          _buildInfoRow('Tipo', _lair!.type.description),
+          _buildInfoRow('Ocupação', _lair!.occupation.description),
+          _buildInfoRow('Ocupante', _lair!.occupant),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Detalhes Específicos
+        _buildInfoCard('Detalhes Específicos', Icons.info, [
+          _buildDetailText(_lair!.details),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildDetailText(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: SelectableText(
+        text,
+        style: TextStyle(color: Colors.white, fontSize: 13),
+      ),
+    );
+  }
+
+  Widget _buildRiversRoadsIslandsDetails() {
+    if (_riversRoadsIslands == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.water, [
+          _buildInfoRow('Tipo', _riversRoadsIslands!.type.description),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Detalhes Específicos
+        _buildInfoCard('Detalhes Específicos', Icons.info, [
+          _buildDetailText(_riversRoadsIslands!.details),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildCastleFortDetails() {
+    if (_castleFort == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.fort, [
+          _buildInfoRow('Tipo', _castleFort!.type.description),
+          _buildInfoRow('Tamanho', _castleFort!.size),
+          _buildInfoRow('Defesas', _castleFort!.defenses),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Ocupação
+        _buildInfoCard('Ocupação', Icons.people, [
+          _buildInfoRow('Ocupantes', _castleFort!.occupants),
+          _buildInfoRow('Lorde', _castleFort!.lord),
+          _buildInfoRow('Guarnição', _castleFort!.garrison),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de História
+        _buildInfoCard('História', Icons.history, [
+          _buildInfoRow('Idade', _castleFort!.age),
+          _buildInfoRow('Condição', _castleFort!.condition),
+        ]),
+
+        const SizedBox(height: 12),
+
+        // Card de Informações Especiais
+        _buildInfoCard('Informações Especiais', Icons.star, [
+          _buildInfoRow('Especial', _castleFort!.special),
+          _buildInfoRow('Rumores', _castleFort!.rumors),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildTempleSanctuaryDetails() {
+    if (_templeSanctuary == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.temple_buddhist, [
+          _buildInfoRow('Tipo', _templeSanctuary!.type.description),
+        ]),
+        const SizedBox(height: 16),
+        // Card de Aspectos Religiosos
+        _buildInfoCard('Aspectos Religiosos', Icons.auto_stories, [
+          _buildDetailText(_templeSanctuary!.deity),
+        ]),
+        const SizedBox(height: 16),
+        // Card de Ocupação
+        _buildInfoCard('Ocupação', Icons.people, [
+          _buildDetailText(_templeSanctuary!.occupants),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildNaturalDangerDetails() {
+    if (_naturalDanger == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildInfoCard('Informações do Perigo', Icons.warning, [
+          _buildInfoRow('Tipo', _naturalDanger!.type.description),
+          _buildInfoRow('Efeitos', _naturalDanger!.effects),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildCivilizationDetails() {
+    if (_civilization == null) return _buildLoadingPlaceholder();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Card de Informações Básicas
+        _buildInfoCard('Informações Básicas', Icons.location_city, [
+          _buildInfoRow('Tipo', _civilization!.type.description),
+          _buildInfoRow('População', _civilization!.population),
+        ]),
+        const SizedBox(height: 16),
+        // Card de Governo e Liderança
+        _buildInfoCard('Governo e Liderança', Icons.admin_panel_settings, [
+          _buildInfoRow('Governo', _civilization!.government),
+        ]),
+        const SizedBox(height: 16),
+        // Card de Características da Civilização
+        _buildInfoCard('Características da Civilização', Icons.architecture, [
+          _buildDetailText(_getCivilizationCharacteristics(_civilization!)),
+        ]),
+        const SizedBox(height: 16),
+        // Card de Atitude e Temas
+        _buildInfoCard('Atitude e Temas', Icons.people, [
+          _buildDetailText(_getCivilizationAttitudeAndThemes(_civilization!)),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildLoadingPlaceholder() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Gerando detalhes...',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(String title, IconData icon, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: AppColors.primaryLight, size: 20),
+              const SizedBox(width: 8),
+              SelectableText(
+                title,
+                style: TextStyle(
+                  color: AppColors.primaryLight,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailSection(String title, String content) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableText(
+            title,
+            style: TextStyle(
+              color: AppColors.primaryLight,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            content,
+            style: TextStyle(color: Colors.white, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Métodos auxiliares para detalhes específicos de Descobertas Ancestrais
+  String _getRuinTypeDetails() {
+    return _ancestralDiscovery?.specificType ?? 'Tipo de ruína (Tabela 4.5)';
+  }
+
+  String _getRuinSizeDetails() {
+    return _ancestralDiscovery?.specificSize ?? 'Tamanho da ruína (Tabela 4.5)';
+  }
+
+  String _getRuinDefenseDetails() {
+    return _ancestralDiscovery?.specificSubtype ??
+        'Defesas da ruína (Tabela 4.5)';
+  }
+
+  String _getRelicTypeDetails() {
+    return _ancestralDiscovery?.specificType ?? 'Tipo de relíquia (Tabela 4.6)';
+  }
+
+  String _getRelicConditionDetails() {
+    return _ancestralDiscovery?.specificCondition ??
+        'Condição da relíquia (Tabela 4.7)';
+  }
+
+  String _getObjectTypeDetails() {
+    return _ancestralDiscovery?.specificType ?? 'Tipo de objeto (Tabela 4.8)';
+  }
+
+  String _getObjectSubtypeDetails() {
+    return _ancestralDiscovery?.specificSubtype ??
+        'Subcategoria do objeto (Tabela 4.8)';
+  }
+
+  String _getVestigeTypeDetails() {
+    return _ancestralDiscovery?.specificType ?? 'Tipo de vestígio (Tabela 4.9)';
+  }
+
+  String _getVestigeDetailDetails() {
+    return _ancestralDiscovery?.specificSubtype ??
+        'Detalhe específico (Tabela 4.10)';
+  }
+
+  String _getOssuaryTypeDetails() {
+    return _ancestralDiscovery?.specificType ?? 'Tipo de ossada (Tabela 4.11)';
+  }
+
+  String _getOssuarySizeDetails() {
+    return _ancestralDiscovery?.specificSize ??
+        'Tamanho da ossada (Tabela 4.11)';
+  }
+
+  String _getMagicalItemTypeDetails() {
+    return _ancestralDiscovery?.specificType ??
+        'Tipo de item mágico (Tabela 4.12)';
+  }
+
+  String _getMagicalItemPowerDetails() {
+    return _ancestralDiscovery?.specificPower ??
+        'Poder do item mágico (Tabela 4.12)';
+  }
+
+  String _getAncestralTypeDescription() {
+    if (_ancestralDiscovery == null) return '';
+
+    switch (_ancestralDiscovery!.type) {
+      case AncestralThingType.ruins:
+        return 'Ruínas: construções de grande porte há muito tempo abandonadas pelos seus construtores originais. Podem ter sido ocupadas por criaturas invasoras.';
+      case AncestralThingType.relics:
+        return 'Relíquias: bens de relativo valor comercial de eras ancestrais abandonados pelo tempo. Com uma dose de sorte, tesouros podem ser encontrados dentre as relíquias.';
+      case AncestralThingType.objects:
+        return 'Objetos: ao contrário das relíquias, os objetos não possuíam valor por serem itens de uso comum, do dia a dia.';
+      case AncestralThingType.vestiges:
+        return 'Vestígios: menores e menos impactantes que as ruínas, vestígios são pedaços de construções ou estruturas ancestrais que sobreviveram à passagem do tempo. São pequenos pedaços de algo muito maior que o tempo já conseguiu apagar.';
+      case AncestralThingType.ossuaries:
+        return 'Ossadas: habitantes de tempos ancestrais também deixam suas marcas no tempo com o que sobraram de seus corpos. Alguns podem ter conseguido manter seus tesouros até os dias de hoje.';
+      case AncestralThingType.magicalItems:
+        return 'Itens Mágicos: a magia dos tempos ancestrais pode chegar até os dias de hoje por meio de conhecimento e de itens mágicos há muito perdidos.';
+    }
+  }
+}
+
+class SecondaryActionButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const SecondaryActionButton({
+    super.key,
+    required this.text,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16),
+      label: Text(text),
+      style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
+    );
+  }
+}

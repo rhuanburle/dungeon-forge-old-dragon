@@ -174,9 +174,14 @@ enum LairType {
 
 /// Enum para representar ocupação de covis
 enum LairOccupation {
-  emptyAndAbandoned('Vazio e Abandonado'),
-  empty('Vazio'),
-  halfOccupied('Ocupado por Metade dos Monstros'),
+  emptyAndAbandoned('Vazio e Abandonado: provavelmente sem encontros'),
+  empty('Vazio: chance de 1 em 1d6 do ocupante retornar a cada turno'),
+  halfOccupied(
+    'Ocupado por Metade dos Monstros: chance de 1 em 1d6 da outra metade retornar a cada turno',
+  ),
+  halfOccupiedNests(
+    'Ocupado por Metade dos Monstros: chance de 2 em 1d6 da outra metade retornar a cada turno',
+  ),
   occupied('Ocupado');
 
   const LairOccupation(this.description);

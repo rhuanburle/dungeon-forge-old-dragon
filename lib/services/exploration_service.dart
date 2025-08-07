@@ -2,6 +2,36 @@ import '../enums/exploration_enums.dart';
 import '../enums/table_enums.dart';
 import '../models/exploration.dart';
 import '../utils/dice_roller.dart';
+part 'exploration/ancestral_detailed.dart';
+part 'exploration/ruins_detailed.dart';
+part 'exploration/relics_detailed.dart';
+part 'exploration/objects_detailed.dart';
+part 'exploration/vestiges_detailed.dart';
+part 'exploration/ossuaries_detailed.dart';
+part 'exploration/magical_items_detailed.dart';
+part 'exploration/lairs_detailed.dart';
+part 'exploration/rivers_roads_islands_detailed.dart';
+part 'exploration/castle_fort_detailed.dart';
+part 'exploration/temple_sanctuary_detailed.dart';
+part 'exploration/natural_danger_detailed.dart';
+part 'exploration/civilization_detailed.dart';
+// Basic generators split
+part 'exploration_basic/ancestral_basic.dart';
+part 'exploration_basic/ruins_basic.dart';
+part 'exploration_basic/relics_basic.dart';
+part 'exploration_basic/objects_basic.dart';
+part 'exploration_basic/vestiges_basic.dart';
+part 'exploration_basic/ossuaries_basic.dart';
+part 'exploration_basic/magical_items_basic.dart';
+part 'exploration_basic/lairs_basic.dart';
+part 'exploration_basic/dungeon_cave_basic.dart';
+part 'exploration_basic/burrow_nest_camp_basic.dart';
+part 'exploration_basic/tribe_basic.dart';
+part 'exploration_basic/rri_basic.dart';
+part 'exploration_basic/castle_fort_basic.dart';
+part 'exploration_basic/temple_sanctuary_basic.dart';
+part 'exploration_basic/natural_danger_basic.dart';
+part 'exploration_basic/civilization_basic.dart';
 
 /// Função utilitária para calcular e substituir fórmulas de dados nos textos
 String _calculateDiceFormulas(String text) {
@@ -67,44 +97,8 @@ class ExplorationService {
   }
 
   /// Gera descoberta ancestral (Tabela 4.4)
-  AncestralDiscovery generateAncestralDiscovery() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final conditionRoll = DiceRoller.rollStatic(1, 6);
-    final materialRoll = DiceRoller.rollStatic(1, 6);
-    final stateRoll = DiceRoller.rollStatic(1, 6);
-    final guardianRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getAncestralThingType(typeRoll);
-    final condition = _getAncestralCondition(conditionRoll);
-    final material = _getAncestralMaterial(materialRoll);
-    final state = _getAncestralState(stateRoll);
-    final guardian = _getAncestralGuardian(guardianRoll);
-
-    final description = _getAncestralDescription(
-      type,
-      condition,
-      material,
-      state,
-      guardian,
-    );
-    final details = _getAncestralDetails(
-      type,
-      condition,
-      material,
-      state,
-      guardian,
-    );
-
-    return AncestralDiscovery(
-      type: type,
-      condition: condition,
-      material: material,
-      state: state,
-      guardian: guardian,
-      description: description,
-      details: details,
-    );
-  }
+  AncestralDiscovery generateAncestralDiscovery() =>
+      generateAncestralDiscoveryBasicImpl(this);
 
   /// Gera ruínas (Tabela 4.5)
   Ruin generateRuin() {
@@ -1469,6 +1463,7 @@ Tabelas Utilizadas:
     }
   }
 
+  /* removed unused: _getMagicalItemDetails
   String _getMagicalItemDetails(MagicalItemType type, int roll) {
     // Tabela 4.12 - Itens Mágicos
     switch (type) {
@@ -1586,6 +1581,7 @@ Tabelas Utilizadas:
         }
     }
   }
+  */
 
   LairType _getLairType(int roll) {
     switch (roll) {
@@ -3071,379 +3067,50 @@ Tabelas Utilizadas:
   }
 
   /// Gera descoberta ancestral com detalhamento completo (Tabela 4.4)
-  AncestralDiscovery generateDetailedAncestralDiscovery() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final conditionRoll = DiceRoller.rollStatic(1, 6);
-    final materialRoll = DiceRoller.rollStatic(1, 6);
-    final stateRoll = DiceRoller.rollStatic(1, 6);
-    final guardianRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getAncestralThingType(typeRoll);
-    final condition = _getAncestralCondition(conditionRoll);
-    final material = _getAncestralMaterial(materialRoll);
-    final state = _getAncestralState(stateRoll);
-    final guardian = _getAncestralGuardian(guardianRoll);
-
-    // Gerar detalhes específicos baseados no tipo
-    final specificDetails = _generateAncestralSpecificDetails(type);
-
-    final description = _generateDetailedAncestralDescription(
-      type,
-      condition,
-      material,
-      state,
-      guardian,
-    );
-
-    final details = _generateDetailedAncestralDetails(
-      type,
-      condition,
-      material,
-      state,
-      guardian,
-    );
-
-    return AncestralDiscovery(
-      type: type,
-      condition: condition,
-      material: material,
-      state: state,
-      guardian: guardian,
-      description: description,
-      details: details,
-      specificType: specificDetails['type'],
-      specificSize: specificDetails['size'],
-      specificCondition: specificDetails['condition'],
-      specificPower: specificDetails['power'],
-      specificSubtype: specificDetails['subtype'],
-    );
-  }
+  AncestralDiscovery generateDetailedAncestralDiscovery() =>
+      generateDetailedAncestralDiscoveryImpl(this);
 
   /// Gera ruína com detalhamento completo (Tabela 4.5)
-  Ruin generateDetailedRuin() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final sizeRoll = DiceRoller.rollStatic(1, 6);
-    final defenseRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getRuinType(typeRoll);
-    final size = _getRuinSize(sizeRoll);
-    final defenses = _getRuinDefenses(defenseRoll, type);
-
-    final description = _generateDetailedRuinDescription(type, size, defenses);
-    final details = _generateDetailedRuinDetails(type, size, defenses);
-
-    return Ruin(
-      type: type,
-      description: description,
-      details: details,
-      size: size,
-      defenses: defenses,
-    );
-  }
+  Ruin generateDetailedRuin() => generateDetailedRuinImpl(this);
 
   /// Gera relíquia com detalhamento completo (Tabela 4.6)
-  Relic generateDetailedRelic() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final conditionRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getRelicType(typeRoll);
-    final condition = _getRelicCondition(conditionRoll);
-
-    final description = _generateDetailedRelicDescription(type, condition);
-    final details = _generateDetailedRelicDetails(type, condition);
-
-    return Relic(
-      type: type,
-      description: description,
-      details: details,
-      condition: condition,
-    );
-  }
+  Relic generateDetailedRelic() => generateDetailedRelicImpl(this);
 
   /// Gera objeto com detalhamento completo (Tabela 4.8)
-  Object generateDetailedObject() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final subtypeRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getObjectType(typeRoll);
-    final subtype = _getObjectSubtype(type, subtypeRoll);
-
-    final description = _generateDetailedObjectDescription(type, subtype);
-    final details = _generateDetailedObjectDetails(type, subtype);
-
-    return Object(
-      type: type,
-      description: description,
-      details: details,
-      subtype: subtype,
-    );
-  }
+  Object generateDetailedObject() => generateDetailedObjectImpl(this);
 
   /// Gera vestígio com detalhamento completo (Tabela 4.9)
-  Vestige generateDetailedVestige() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final detailRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getVestigeType(typeRoll);
-    final detail = _getVestigeDetail(type, detailRoll);
-
-    final description = _generateDetailedVestigeDescription(type, detail);
-    final details = _generateDetailedVestigeDetails(type, detail);
-
-    return Vestige(
-      type: type,
-      description: description,
-      details: details,
-      detail: detail,
-    );
-  }
+  Vestige generateDetailedVestige() => generateDetailedVestigeImpl(this);
 
   /// Gera ossada com detalhamento completo (Tabela 4.11)
-  Ossuary generateDetailedOssuary() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final sizeRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getOssuaryType(typeRoll);
-    final size = _getOssuarySizeByType(type, sizeRoll);
-
-    final description = _generateDetailedOssuaryDescription(type, size);
-    final details = _generateDetailedOssuaryDetails(type, size);
-
-    return Ossuary(
-      type: type,
-      description: description,
-      details: details,
-      size: size,
-    );
-  }
+  Ossuary generateDetailedOssuary() => generateDetailedOssuaryImpl(this);
 
   /// Gera item mágico com detalhamento completo (Tabela 4.12)
-  MagicalItem generateDetailedMagicalItem() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final powerRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getMagicalItemType(typeRoll);
-    final power = _getMagicalItemPower(type, powerRoll);
-
-    final description = _generateDetailedMagicalItemDescription(type, power);
-    final details = _generateDetailedMagicalItemDetails(type, power);
-
-    return MagicalItem(
-      type: type,
-      description: description,
-      details: details,
-      power: power,
-    );
-  }
+  MagicalItem generateDetailedMagicalItem() =>
+      generateDetailedMagicalItemImpl(this);
 
   /// Gera covil com detalhamento completo (Tabela 4.13)
-  Lair generateDetailedLair() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final occupationRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getLairType(typeRoll);
-    final occupation = _getLairOccupation(occupationRoll);
-
-    final description = _generateDetailedLairDescription(type, occupation);
-    final details = _generateDetailedLairDetails(type, occupation);
-    final occupant = _getLairOccupant(type);
-
-    return Lair(
-      type: type,
-      description: description,
-      details: details,
-      occupation: occupation,
-      occupant: occupant,
-    );
-  }
+  Lair generateDetailedLair() => generateDetailedLairImpl(this);
 
   /// Gera rios, estradas e ilhas com detalhamento completo (Tabela 4.25)
-  RiversRoadsIslands generateDetailedRiversRoadsIslands() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final directionRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getRiversRoadsIslandsType(
-      false,
-      false,
-      typeRoll,
-    ); // Usar assinatura correta
-    final direction = _getRiversRoadsIslandsDirection(directionRoll);
-
-    final description = _generateDetailedRiversRoadsIslandsDescription(
-      type,
-      direction,
-    );
-    final details = _generateDetailedRiversRoadsIslandsDetails(type, direction);
-
-    return RiversRoadsIslands(
-      type: type,
-      description: description,
-      details: details,
-      direction: direction,
-    );
-  }
+  RiversRoadsIslands generateDetailedRiversRoadsIslands() =>
+      generateDetailedRiversRoadsIslandsImpl(this);
 
   /// Gera castelo/forte com detalhamento completo (Tabela 4.30)
-  CastleFort generateDetailedCastleFort() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final sizeRoll = DiceRoller.rollStatic(1, 6);
-    final defenseRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getCastleFortType(typeRoll);
-    final size = _getCastleFortSize(sizeRoll);
-    final defenses = _getCastleFortDefenses(defenseRoll);
-    final detailRoll = DiceRoller.rollStatic(1, 6);
-    final occupants = _getCastleFortOccupants(type, detailRoll);
-
-    final description = _generateDetailedCastleFortDescription(
-      type,
-      size,
-      defenses,
-    );
-    final details = _generateDetailedCastleFortDetails(
-      type,
-      size,
-      defenses,
-      occupants,
-    );
-
-    return CastleFort(
-      type: type,
-      description: description,
-      details: details,
-      size: size,
-      defenses: defenses,
-      occupants: occupants,
-      age: 'Não especificado',
-      condition: 'Não especificado',
-      lord: 'Não especificado',
-      garrison: 'Não especificado',
-      special: 'Não especificado',
-      rumors: 'Não especificado',
-    );
-  }
+  CastleFort generateDetailedCastleFort() =>
+      generateDetailedCastleFortImpl(this);
 
   /// Gera templo/santuário com detalhamento completo (Tabelas 4.33-4.37)
-  TempleSanctuary generateDetailedTempleSanctuary() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final religiousAspectsRoll = DiceRoller.rollStatic(1, 6);
-    final occupationRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getTempleSanctuaryType(typeRoll);
-    final religiousAspects = _getReligiousAspects(religiousAspectsRoll);
-    final occupation = _getTempleSanctuaryOccupation(occupationRoll);
-
-    final description = _generateDetailedTempleSanctuaryDescription(
-      type,
-      religiousAspects,
-    );
-    final details = _generateDetailedTempleSanctuaryDetails(
-      type,
-      religiousAspects,
-      occupation,
-    );
-
-    return TempleSanctuary(
-      type: type,
-      description: description,
-      details: details,
-      deity: religiousAspects,
-      occupants: occupation,
-    );
-  }
+  TempleSanctuary generateDetailedTempleSanctuary() =>
+      generateDetailedTempleSanctuaryImpl(this);
 
   /// Gera perigo natural com detalhamento completo (Tabela 4.38)
-  NaturalDanger generateDetailedNaturalDanger() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final effectRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getNaturalDangerType(
-      TerrainType.forests,
-      typeRoll,
-    ); // Usar parâmetros corretos
-    final effects = _getNaturalDangerEffects(type);
-
-    final description = _generateDetailedNaturalDangerDescription(
-      type,
-      effects,
-    );
-    final details = _generateDetailedNaturalDangerDetails(type, effects);
-
-    return NaturalDanger(
-      type: type,
-      description: description,
-      details: details,
-      effects: effects,
-    );
-  }
+  NaturalDanger generateDetailedNaturalDanger() =>
+      generateDetailedNaturalDangerImpl(this);
 
   /// Gera civilização com detalhamento completo (Tabela 4.39)
-  Civilization generateDetailedCivilization() {
-    final typeRoll = DiceRoller.rollStatic(1, 6);
-    final governmentRoll = DiceRoller.rollStatic(1, 6);
-    // Tabela 4.41
-    final techRoll = DiceRoller.rollStatic(1, 6);
-    final attitudeRoll = DiceRoller.rollStatic(1, 6);
-    final temaRoll = DiceRoller.rollStatic(1, 6);
-
-    final type = _getCivilizationType(typeRoll);
-    final population = _getCivilizationPopulationByType(type);
-    final government = _getCivilizationGovernment(governmentRoll);
-    final tech = _getTechLevel(techRoll);
-    final appearance = _getAppearance(techRoll);
-    final alignment = _getAlignment(techRoll);
-    final ruler = _getRuler(techRoll);
-    final rulerLevel = _getRulerLevel(techRoll);
-    final race = _getRace(techRoll);
-    final special = _getSpecial(techRoll);
-    final attitude = _getAttitude(attitudeRoll);
-    final temaPovoado = _getTemaPovoado(temaRoll);
-    final temaCidade = _getTemaCidade(temaRoll);
-
-    final description = _generateDetailedCivilizationDescription(
-      type,
-      population,
-    );
-    final details = _generateDetailedCivilizationDetailsFull(
-      type,
-      population,
-      government,
-      tech,
-      appearance,
-      alignment,
-      ruler,
-      rulerLevel,
-      race,
-      special,
-      attitude,
-      temaPovoado,
-      temaCidade,
-    );
-    final characteristics = _generateCivilizationCharacteristics(
-      tech,
-      appearance,
-      alignment,
-      ruler,
-      rulerLevel,
-      race,
-      special,
-    );
-    final attitudeAndThemes = _generateCivilizationAttitudeAndThemes(
-      attitude,
-      temaPovoado,
-      temaCidade,
-    );
-
-    return Civilization(
-      type: type,
-      description: description,
-      details: details,
-      population: population,
-      government: government,
-      characteristics: characteristics,
-      attitudeAndThemes: attitudeAndThemes,
-    );
-  }
+  Civilization generateDetailedCivilization() =>
+      generateDetailedCivilizationImpl(this);
 
   String _getTechLevel(int roll) {
     switch (roll) {
@@ -4168,24 +3835,7 @@ Rolagens: 1d6 para cada aspecto (Tabela 4.39)
 ''';
   }
 
-  String _generateDetailedCivilizationDetails(
-    CivilizationType type,
-    String population,
-    String government,
-  ) {
-    return '''
-Detalhes da Civilização:
-• Tipo: ${type.description}
-• População: $population
-• Governo: $government
-
-Tabelas Utilizadas:
-• Tabela 4.39: Civilização
-• Tabela 4.40: Assentamentos
-• Tabela 4.41: Detalhando Povoados
-• Tabela 4.42: Atitude com os Visitantes e Temas Centrais
-''';
-  }
+  // removed unused: _generateDetailedCivilizationDetails
 
   // Métodos auxiliares para obter tipos e detalhes
   RuinType _getRuinType(int roll) {
@@ -4241,8 +3891,6 @@ Tabelas Utilizadas:
         return _getCastleSize(roll);
       case RuinType.temple:
         return _getTempleSize(roll);
-      default:
-        return _getRuinSize(roll);
     }
   }
 
@@ -5596,8 +5244,6 @@ Tabelas Utilizadas:
         return '1d4 pontos de dano devido ao vapor. Gases sulfurosos possíveis.';
       case NaturalDangerType.altitude:
         return 'Falta de oxigênio causa exaustão. Custa 2 pontos de jornada.';
-      default:
-        return 'Efeitos variados conforme o tipo de perigo.';
     }
   }
 

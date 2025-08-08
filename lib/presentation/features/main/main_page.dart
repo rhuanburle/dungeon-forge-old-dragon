@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../dungeon/dungeon_page.dart';
 import '../encounters/encounters_page.dart';
 import '../ermos/ermos_page.dart';
+import '../solo_dragon/solo_dragon_page.dart';
 import '../../../constants/image_path.dart';
 import '../../../theme/app_colors.dart';
 
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
     const DungeonPage(),
     const EncountersPage(),
     const ErmosPage(),
+    const SoloDragonPage(),
   ];
 
   final List<NavigationItem> _navigationItems = [
@@ -35,6 +37,11 @@ class _MainPageState extends State<MainPage> {
       page: const EncountersPage(),
     ),
     NavigationItem(title: 'Ermos', icon: Icons.forest, page: const ErmosPage()),
+    NavigationItem(
+      title: 'Solo Dragon',
+      icon: Icons.casino,
+      page: const SoloDragonPage(),
+    ),
   ];
 
   @override

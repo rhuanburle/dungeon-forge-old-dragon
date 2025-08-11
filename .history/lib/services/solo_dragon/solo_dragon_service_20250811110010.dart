@@ -1493,11 +1493,7 @@ class OptionalEncounterResult {
   final int roll; // 1..20
   final String name;
   final bool isLeader; // true se veio de 19/20
-  const OptionalEncounterResult({
-    required this.roll,
-    required this.name,
-    required this.isLeader,
-  });
+  const OptionalEncounterResult({required this.roll, required this.name, required this.isLeader});
 }
 
 const Map<int, String> _optionalEncounter1d20 = {

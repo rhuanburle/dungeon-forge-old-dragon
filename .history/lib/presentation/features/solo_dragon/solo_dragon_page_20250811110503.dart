@@ -23,9 +23,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
   int _dungeonTurns = 0; // contagem de turnos de masmorra (10min cada)
   bool _noisyLight =
       false; // tochas/lanternas barulho/luz (aumenta chance de encontro)
-  String? _lastTravelEvent;
-  String? _lastCityEvent;
-  String? _lastOptionalEncounter;
 
   // Estado persistente
   DungeonSetup? _setup;
@@ -177,8 +174,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildOptionalStatusChips(),
-          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -210,7 +205,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                 icon: Icons.terrain,
                 onPressed: () {
                   final ev = _service.rollTravelEventD6();
-                  setState(() => _lastTravelEvent = ev);
                   _showInfo('Viagem', ev);
                 },
               ),
@@ -219,7 +213,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                 icon: Icons.location_city,
                 onPressed: () {
                   final ev = _service.rollCityEventD6();
-                  setState(() => _lastCityEvent = ev);
                   _showInfo('Cidade', ev);
                 },
               ),
@@ -231,7 +224,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                   final info = en.isLeader
                       ? '${en.name} (Líder) — rolou ${en.roll} (Re-roll base com líder)'
                       : '${en.name} — rolou ${en.roll}';
-                  setState(() => _lastOptionalEncounter = info);
                   _showInfo('Encontro (Opcional)', info);
                 },
               ),
@@ -249,7 +241,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                       final info = en.isLeader
                           ? 'Turno ${_dungeonTurns}: Encontro — ${en.name} (Líder)'
                           : 'Turno ${_dungeonTurns}: Encontro — ${en.name}';
-                      setState(() => _lastOptionalEncounter = info);
                       _showInfo('Encontro Aleatório', info);
                     } else {
                       _showInfo('Turno ${_dungeonTurns}', 'Sem encontro.');
@@ -261,8 +252,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          _buildOptionalLastResults(),
           if (_mercenary != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -278,115 +267,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
               style: TextStyle(color: AppColors.textSecondary),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOptionalStatusChips() {
-    final selectedColor = AppColors.primaryDark;
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        FilterChip(
-          selected: _noisyLight,
-          selectedColor: selectedColor,
-          checkmarkColor: Colors.white,
-          backgroundColor: AppColors.surface,
-          label: Text(
-            _noisyLight ? 'Luz/Barulho: Ligado' : 'Luz/Barulho: Desligado',
-            style: const TextStyle(color: Colors.white),
-          ),
-          onSelected: (v) => setState(() => _noisyLight = v),
-        ),
-        FilterChip(
-          selected: _mercenary != null,
-          selectedColor: selectedColor,
-          checkmarkColor: Colors.white,
-          backgroundColor: AppColors.surface,
-          label: Text(
-            _mercenary != null ? 'Mercenário: Ativo' : 'Mercenário: Inativo',
-            style: const TextStyle(color: Colors.white),
-          ),
-          onSelected: (v) => setState(() {
-            _mercenary = v ? MercenaryState.present(costMultiplier: 10) : null;
-          }),
-        ),
-        Chip(
-          backgroundColor: AppColors.surface,
-          label: Text(
-            'Turnos: $_dungeonTurns',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOptionalLastResults() {
-    final items = <Widget>[];
-    if (_lastTravelEvent != null) {
-      items.add(_buildResultTile('Último Evento de Viagem', _lastTravelEvent!));
-    }
-    if (_lastCityEvent != null) {
-      items.add(_buildResultTile('Último Evento de Cidade', _lastCityEvent!));
-    }
-    if (_lastOptionalEncounter != null) {
-      items.add(
-        _buildResultTile('Último Encontro (Opcional)', _lastOptionalEncounter!),
-      );
-    }
-    if (items.isEmpty) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Últimos resultados',
-          style: TextStyle(
-            color: AppColors.primaryLight,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        ...items,
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () => setState(() {
-              _lastTravelEvent = null;
-              _lastCityEvent = null;
-              _lastOptionalEncounter = null;
-            }),
-            child: const Text(
-              'Limpar',
-              style: TextStyle(color: Colors.white70),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildResultTile(String title, String text) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primaryDark),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
-          ),
-          const SizedBox(height: 4),
-          Text(text, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );

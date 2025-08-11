@@ -333,9 +333,7 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
       items.add(_buildResultTile('Último Evento de Cidade', _lastCityEvent!));
     }
     if (_lastOptionalEncounter != null) {
-      items.add(
-        _buildResultTile('Último Encontro (Opcional)', _lastOptionalEncounter!),
-      );
+      items.add(_buildResultTile('Último Encontro (Opcional)', _lastOptionalEncounter!));
     }
     if (items.isEmpty) return const SizedBox.shrink();
     return Column(
@@ -343,10 +341,7 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
       children: [
         Text(
           'Últimos resultados',
-          style: TextStyle(
-            color: AppColors.primaryLight,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         ...items,
@@ -358,12 +353,9 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
               _lastCityEvent = null;
               _lastOptionalEncounter = null;
             }),
-            child: const Text(
-              'Limpar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Limpar', style: TextStyle(color: Colors.white70)),
           ),
-        ),
+        )
       ],
     );
   }
@@ -381,10 +373,7 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
-          ),
+          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
           const SizedBox(height: 4),
           Text(text, style: const TextStyle(color: Colors.white)),
         ],

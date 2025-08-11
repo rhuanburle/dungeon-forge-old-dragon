@@ -21,11 +21,7 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
   bool _optionalMode = false; // ativa os opcionais sem impactar o fluxo atual
   MercenaryState? _mercenary; // estado do mercenário opcional
   int _dungeonTurns = 0; // contagem de turnos de masmorra (10min cada)
-  bool _noisyLight =
-      false; // tochas/lanternas barulho/luz (aumenta chance de encontro)
-  String? _lastTravelEvent;
-  String? _lastCityEvent;
-  String? _lastOptionalEncounter;
+  bool _noisyLight = false; // tochas/lanternas barulho/luz (aumenta chance de encontro)
 
   // Estado persistente
   DungeonSetup? _setup;
@@ -169,100 +165,77 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Opcional — Suplemento Solo Dragon Dungeon',
-            style: TextStyle(
-              color: AppColors.primaryLight,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text('Opcional — Suplemento Solo Dragon Dungeon',
+              style: TextStyle(color: AppColors.primaryLight, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          _buildOptionalStatusChips(),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              ActionButton(
-                text: _mercenary == null
-                    ? 'Contratar Mercenário'
-                    : 'Dispensar Mercenário',
-                icon: Icons.shield,
-                onPressed: () {
-                  setState(() {
-                    if (_mercenary == null) {
-                      _mercenary = MercenaryState.present(costMultiplier: 10);
-                    } else {
-                      _mercenary = null;
-                    }
-                  });
-                },
-              ),
-              ActionButton(
-                text: _noisyLight
-                    ? 'Desligar Luz/Barulho'
-                    : 'Ligar Luz/Barulho',
-                icon: Icons.lightbulb,
-                onPressed: () => setState(() => _noisyLight = !_noisyLight),
-              ),
-              ActionButton(
-                text: 'Evento de Viagem (d6)',
-                icon: Icons.terrain,
-                onPressed: () {
-                  final ev = _service.rollTravelEventD6();
-                  setState(() => _lastTravelEvent = ev);
-                  _showInfo('Viagem', ev);
-                },
-              ),
-              ActionButton(
-                text: 'Evento de Cidade (d6)',
-                icon: Icons.location_city,
-                onPressed: () {
-                  final ev = _service.rollCityEventD6();
-                  setState(() => _lastCityEvent = ev);
-                  _showInfo('Cidade', ev);
-                },
-              ),
-              ActionButton(
-                text: 'Encontro 1d20 (Tabela 6)',
-                icon: Icons.casino,
-                onPressed: () {
-                  final en = _service.rollOptionalEncounter1d20();
-                  final info = en.isLeader
-                      ? '${en.name} (Líder) — rolou ${en.roll} (Re-roll base com líder)'
-                      : '${en.name} — rolou ${en.roll}';
-                  setState(() => _lastOptionalEncounter = info);
-                  _showInfo('Encontro (Opcional)', info);
-                },
-              ),
-              ActionButton(
-                text: 'Avançar 1 Turno de Masmorra',
-                icon: Icons.timer,
-                onPressed: () {
-                  setState(() => _dungeonTurns += 1);
-                  if (_service.shouldCheckRandomEncounter(_dungeonTurns)) {
-                    final occurs = _service.rollRandomEncounterChance(
-                      noisyLight: _noisyLight,
-                    );
-                    if (occurs) {
-                      final en = _service.rollOptionalEncounter1d20();
-                      final info = en.isLeader
-                          ? 'Turno ${_dungeonTurns}: Encontro — ${en.name} (Líder)'
-                          : 'Turno ${_dungeonTurns}: Encontro — ${en.name}';
-                      setState(() => _lastOptionalEncounter = info);
-                      _showInfo('Encontro Aleatório', info);
-                    } else {
-                      _showInfo('Turno ${_dungeonTurns}', 'Sem encontro.');
-                    }
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            ActionButton(
+              text: _mercenary == null ? 'Contratar Mercenário' : 'Dispensar Mercenário',
+              icon: Icons.shield,
+              onPressed: () {
+                setState(() {
+                  if (_mercenary == null) {
+                    _mercenary = MercenaryState.present(costMultiplier: 10);
                   } else {
-                    _showInfo('Turno ${_dungeonTurns}', 'Exploração em curso.');
+                    _mercenary = null;
                   }
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          _buildOptionalLastResults(),
+                });
+              },
+            ),
+            ActionButton(
+              text: _noisyLight ? 'Desligar Luz/Barulho' : 'Ligar Luz/Barulho',
+              icon: Icons.lightbulb,
+              onPressed: () => setState(() => _noisyLight = !_noisyLight),
+            ),
+            ActionButton(
+              text: 'Evento de Viagem (d6)',
+              icon: Icons.terrain,
+              onPressed: () {
+                final ev = _service.rollTravelEventD6();
+                _showInfo('Viagem', ev);
+              },
+            ),
+            ActionButton(
+              text: 'Evento de Cidade (d6)',
+              icon: Icons.location_city,
+              onPressed: () {
+                final ev = _service.rollCityEventD6();
+                _showInfo('Cidade', ev);
+              },
+            ),
+            ActionButton(
+              text: 'Encontro 1d20 (Tabela 6)',
+              icon: Icons.casino,
+              onPressed: () {
+                final en = _service.rollOptionalEncounter1d20();
+                final info = en.isLeader
+                    ? '${en.name} (Líder) — rolou ${en.roll} (Re-roll base com líder)'
+                    : '${en.name} — rolou ${en.roll}';
+                _showInfo('Encontro (Opcional)', info);
+              },
+            ),
+            ActionButton(
+              text: 'Avançar 1 Turno de Masmorra',
+              icon: Icons.timer,
+              onPressed: () {
+                setState(() => _dungeonTurns += 1);
+                if (_service.shouldCheckRandomEncounter(_dungeonTurns)) {
+                  final occurs = _service.rollRandomEncounterChance(noisyLight: _noisyLight);
+                  if (occurs) {
+                    final en = _service.rollOptionalEncounter1d20();
+                    final info = en.isLeader
+                        ? 'Turno ${_dungeonTurns}: Encontro — ${en.name} (Líder)'
+                        : 'Turno ${_dungeonTurns}: Encontro — ${en.name}';
+                    _showInfo('Encontro Aleatório', info);
+                  } else {
+                    _showInfo('Turno ${_dungeonTurns}', 'Sem encontro.');
+                  }
+                } else {
+                  _showInfo('Turno ${_dungeonTurns}', 'Exploração em curso.');
+                }
+              },
+            ),
+          ]),
           if (_mercenary != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -283,115 +256,6 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
     );
   }
 
-  Widget _buildOptionalStatusChips() {
-    final selectedColor = AppColors.primaryDark;
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        FilterChip(
-          selected: _noisyLight,
-          selectedColor: selectedColor,
-          checkmarkColor: Colors.white,
-          backgroundColor: AppColors.surface,
-          label: Text(
-            _noisyLight ? 'Luz/Barulho: Ligado' : 'Luz/Barulho: Desligado',
-            style: const TextStyle(color: Colors.white),
-          ),
-          onSelected: (v) => setState(() => _noisyLight = v),
-        ),
-        FilterChip(
-          selected: _mercenary != null,
-          selectedColor: selectedColor,
-          checkmarkColor: Colors.white,
-          backgroundColor: AppColors.surface,
-          label: Text(
-            _mercenary != null ? 'Mercenário: Ativo' : 'Mercenário: Inativo',
-            style: const TextStyle(color: Colors.white),
-          ),
-          onSelected: (v) => setState(() {
-            _mercenary = v ? MercenaryState.present(costMultiplier: 10) : null;
-          }),
-        ),
-        Chip(
-          backgroundColor: AppColors.surface,
-          label: Text(
-            'Turnos: $_dungeonTurns',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOptionalLastResults() {
-    final items = <Widget>[];
-    if (_lastTravelEvent != null) {
-      items.add(_buildResultTile('Último Evento de Viagem', _lastTravelEvent!));
-    }
-    if (_lastCityEvent != null) {
-      items.add(_buildResultTile('Último Evento de Cidade', _lastCityEvent!));
-    }
-    if (_lastOptionalEncounter != null) {
-      items.add(
-        _buildResultTile('Último Encontro (Opcional)', _lastOptionalEncounter!),
-      );
-    }
-    if (items.isEmpty) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Últimos resultados',
-          style: TextStyle(
-            color: AppColors.primaryLight,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        ...items,
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () => setState(() {
-              _lastTravelEvent = null;
-              _lastCityEvent = null;
-              _lastOptionalEncounter = null;
-            }),
-            child: const Text(
-              'Limpar',
-              style: TextStyle(color: Colors.white70),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildResultTile(String title, String text) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primaryDark),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
-          ),
-          const SizedBox(height: 4),
-          Text(text, style: const TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-
   void _showInfo(String title, String message) {
     if (!mounted) return;
     showDialog(
@@ -402,10 +266,7 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
         title: Text(title, style: const TextStyle(color: Colors.white)),
         content: Text(message, style: const TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Fechar'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Fechar')),
         ],
       ),
     );

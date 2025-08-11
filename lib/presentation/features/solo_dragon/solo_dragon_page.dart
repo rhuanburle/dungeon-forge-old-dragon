@@ -256,6 +256,17 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                   ? '${room.trapRoll} — ${_dashIfEmpty(room.trap)}'
                   : '—',
             ),
+            if (room.trapTriggeredFromContent && room.trap.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  getTrapDetail(room.trap),
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             _buildRoomSummaryRow(
               'Encontro',
               room.encounterTriggeredFromTrap
@@ -266,14 +277,10 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
-                  onPressed: _showEncounterTable,
-                  icon: const Icon(
-                    Icons.visibility,
-                    size: 16,
-                    color: Colors.white,
-                  ),
+                  onPressed: _rollEncounterAndShowTable,
+                  icon: const Icon(Icons.casino, size: 16, color: Colors.white),
                   label: const Text(
-                    'Ver Tabela de Encontro',
+                    'Rolar Encontro',
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
@@ -684,14 +691,14 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: _showFinalMysteryTables,
+                    onPressed: _rollFinalChamberAndShow,
                     icon: const Icon(
-                      Icons.visibility,
+                      Icons.casino,
                       size: 16,
                       color: Colors.amber,
                     ),
                     label: const Text(
-                      'Ver A5.7',
+                      'Rolar Câmara Final',
                       style: TextStyle(color: Colors.amber),
                     ),
                   ),
@@ -840,6 +847,17 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                     ? '${room.trapRoll} (d6+d6) — ${_dashIfEmpty(room.trap)}'
                     : '—',
               ),
+              if (room.trapTriggeredFromContent && room.trap.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    getTrapDetail(room.trap),
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               _buildRoomDetail(
                 'Encontro',
                 room.encounterTriggeredFromTrap
@@ -907,7 +925,18 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
     });
   }
 
-  void _showEncounterTable() {
+  void _rollEncounterAndShowTable() {
+    // Rola primeiro e mostra um resumo rápido
+    final roll = _service.rollD6D6();
+    final text = _service.getEventTextForRoll(roll, EventColumn.encounter);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Encontro $roll: $text'),
+        backgroundColor: AppColors.primaryDark,
+      ),
+    );
+
+    // Abre o pop-up já com o resultado engatilhado
     showDialog(
       context: context,
       builder: (context) {
@@ -925,35 +954,86 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
                 'Tabela A5.5 - Encontros',
                 style: TextStyle(color: Colors.white),
               ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.casino, size: 16),
-                label: const Text('Rolar 1d6+1d6'),
-              ),
             ],
           ),
           content: SizedBox(
-            width: 600,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Use 1d6 para dezena e 1d6 para unidade (11..66).',
-                    style: TextStyle(color: Colors.white70),
+            width: 680,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryDark.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.primaryDark),
                   ),
-                  const SizedBox(height: 12),
-                  for (final r in all)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Text(
-                        '$r — ${_service.getEventTextForRoll(r, EventColumn.encounter)}',
-                        style: const TextStyle(color: Colors.white),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.casino, size: 18, color: Colors.white),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Rolado: $roll — $text',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Use 1d6 para dezena e 1d6 para unidade (11..66).',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 360,
+                  child: Row(
+                    children: [
+                      // Coluna 1 (11..36)
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            for (final r in all.where((e) => e <= 36))
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                ),
+                                child: Text(
+                                  '$r — ${_service.getEventTextForRoll(r, EventColumn.encounter)}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Coluna 2 (41..66)
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            for (final r in all.where((e) => e >= 41))
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                ),
+                                child: Text(
+                                  '$r — ${_service.getEventTextForRoll(r, EventColumn.encounter)}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           actions: [
@@ -967,22 +1047,67 @@ class _SoloDragonPageState extends State<SoloDragonPage> {
     );
   }
 
-  void _showFinalMysteryTables() {
+  // Removido: versão antiga do diálogo manual da Câmara Final substituída por _rollFinalChamberAndShow
+
+  void _rollFinalChamberAndShow() {
+    // Rola primeiro e mostra um resumo rápido
+    final result = _service.rollFinalChamber();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Câmara Final: A=${result.aRoll} (${result.aText}) | ${result.subTable}=${result.subRoll} (${result.subText})',
+        ),
+        backgroundColor: AppColors.primaryDark,
+      ),
+    );
+
+    // Abre o diálogo já com o resultado
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: const Text(
-          'Câmara Final (A5.7)',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: const [
+            Icon(Icons.account_tree, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Câmara Final (A5.7)', style: TextStyle(color: Colors.white)),
+          ],
         ),
-        content: const SizedBox(
-          width: 600,
-          child: Text(
-            'Role 1d6 na Subtabela A e combine conforme as regras com as demais subtabelas B, C e D.\n\n'
-            'Obs.: As subtabelas detalhadas podem ser integradas aqui quando disponível.',
-            style: TextStyle(color: Colors.white70),
+        content: SizedBox(
+          width: 620,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Resultado rolado automaticamente:',
+                style: TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryDark.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.primaryDark),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Subtabela A: ${result.aRoll} — ${result.aText}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Subtabela ${result.subTable}: ${result.subRoll} — ${result.subText}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         actions: [

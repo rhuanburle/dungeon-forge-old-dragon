@@ -98,6 +98,35 @@ class SoloDragonService {
     return rollD6() <= 2;
   }
 
+  // ==========================
+  // A5.7 – Câmara Final
+  // ==========================
+  /// Resultado consolidado da Câmara Final (A5.7)
+  FinalChamberResult getFinalChamberForRolls(int aRoll, int subRoll) {
+    final a = _finalA[aRoll] ?? const _FinalA('deu certo em parte (C)', 'C');
+    final subMap = switch (a.subTable) {
+      'B' => _finalB,
+      'C' => _finalC,
+      'D' => _finalD,
+      _ => _finalC,
+    };
+    final subText = subMap[subRoll] ?? '';
+    return FinalChamberResult(
+      aRoll: aRoll,
+      aText: a.text,
+      subTable: a.subTable,
+      subRoll: subRoll,
+      subText: subText,
+    );
+  }
+
+  /// Rola automaticamente a Subtabela A (1d6) e a subtabela indicada (1d6)
+  FinalChamberResult rollFinalChamber() {
+    final aRoll = rollD6();
+    final subRoll = rollD6();
+    return getFinalChamberForRolls(aRoll, subRoll);
+  }
+
   DungeonSetup generateDungeonSetupWithRumors() {
     final rumors = generateRumors();
     final board = RumorBoard.fromRumors(rumors);
@@ -573,6 +602,160 @@ const Map<int, DungeonTypeEntrance> _dungeonTypeEntrance = {
   11: DungeonTypeEntrance('Natural', 'Na boca de um vulcão adormecido'),
   12: DungeonTypeEntrance('Natural', 'Atrás de uma cachoeira'),
 };
+
+// ==========================
+// A5.7 – Câmara Final (Subtabela A: 1d6 ⇒ B/C/D)
+// ==========================
+class FinalChamberResult {
+  final int aRoll;
+  final String aText; // ex.: "não deu nada certo (B)"
+  final String subTable; // 'B' | 'C' | 'D'
+  final int subRoll;
+  final String subText;
+
+  const FinalChamberResult({
+    required this.aRoll,
+    required this.aText,
+    required this.subTable,
+    required this.subRoll,
+    required this.subText,
+  });
+}
+
+class _FinalA {
+  final String text;
+  final String subTable; // 'B' | 'C' | 'D'
+  const _FinalA(this.text, this.subTable);
+}
+
+// Subtabela A (1d6)
+const Map<int, _FinalA> _finalA = {
+  1: _FinalA('não deu nada certo (B)', 'B'),
+  2: _FinalA('não deu nada certo (B)', 'B'),
+  3: _FinalA('deu certo em parte (C)', 'C'),
+  4: _FinalA('deu certo em parte (C)', 'C'),
+  5: _FinalA('foi bem-sucedida (D)', 'D'),
+  6: _FinalA('foi bem-sucedida (D)', 'D'),
+};
+
+// Subtabela B (1..6)
+const Map<int, String> _finalB = {
+  1: 'o construtor morreu',
+  2: 'o construtor virou um morto-vivo',
+  3: 'o construtor foi aprisionado',
+  4: 'o construtor foi derrotado',
+  5: 'o construtor foi banido deste plano',
+  6: 'o construtor foi amaldiçoado',
+};
+
+// Subtabela C (1..6)
+const Map<int, String> _finalC = {
+  1: 'o construtor morreu',
+  2: 'o construtor foi derrotado',
+  3: 'o construtor foi amaldiçoado',
+  4: 'a masmorra foi parcialmente destruída.',
+  5: 'o efeito foi apenas temporário',
+  6: 'uma força oculta surgiu na masmorra',
+};
+
+// Subtabela D (1..6)
+const Map<int, String> _finalD = {
+  1: 'o construtor ficou mais poderoso',
+  2: 'o construtor ficou mais poderoso',
+  3: 'o construtor ascendeu a imortalidade',
+  4: 'o construtor ascendeu a imortalidade',
+  5: 'o objetivo é permanente e é irreversível',
+  6: 'o objetivo é permanente e é irreversível',
+};
+
+// ==========================
+// Detalhes de Armadilhas (coluna 11-12 da Tabela 9-2)
+// ==========================
+String getTrapDetail(String trapText) {
+  final lower = trapText.toLowerCase();
+
+  String fmt(String title, List<String> lines) =>
+      '$title\n- ${lines.join('\n- ')}';
+
+  if (lower.contains('alarme') || lower.contains('sinet')) {
+    return fmt('Alarme', [
+      'Sinetas ocultas por toda a sala soam ao serem ativadas',
+      'Alcance do alerta: ~50 m',
+      'Efeito: ninguém nessa área pode ser surpreendido',
+    ]);
+  }
+  if ((lower.contains('bloco') && lower.contains('cai')) ||
+      lower.contains('bloco que cai')) {
+    return fmt('Bloco que Cai', [
+      'Dano: 1d10 em alvos atingidos',
+      'Origem: teto',
+      'Reação: teste de esquiva/perícia a critério do mestre',
+    ]);
+  }
+  if (lower.contains('dardo') || lower.contains('venen')) {
+    return fmt('Dardos Envenenados', [
+      'Quantidade: 1d6 dardos por disparo',
+      'Dano: 1d4 por dardo',
+      'Efeito: veneno definido pelo mestre (ex.: CON, lentidão, etc.)',
+    ]);
+  }
+  if (lower.contains('desmoronament') || lower.contains('pedra')) {
+    return fmt('Desmoronamento', [
+      'Efeito: interrompe o caminho atual',
+      'Remoção: 3d6+10 turnos para liberar a passagem',
+      'Alternativa: retornar e tentar outra rota',
+    ]);
+  }
+  if (lower.contains('fosso')) {
+    return fmt('Fosso', [
+      'Dano: 2d6 ao cair sobre estacas',
+      'Variante: 1-2 em 1d6 não há estacas; há passagem para nível inferior',
+    ]);
+  }
+  if (lower.contains('guilhotina')) {
+    return fmt('Guilhotina Oculta', [
+      'Dano: 1d8',
+      'Gatilho: fio/placa de pressão',
+    ]);
+  }
+  if ((lower.contains('poço') || lower.contains('poco')) &&
+      (lower.contains('água') || lower.contains('agua'))) {
+    return fmt('Poço de Água', [
+      'Efeito: fonte no centro da sala',
+      'Pode ser inofensiva, profana, benta ou envenenada',
+    ]);
+  }
+  if (lower.contains('porta secreta') || lower.contains('secreta')) {
+    return fmt('Porta Secreta', [
+      'Só revele se os personagens a descobrirem',
+      'Caso contrário, trate a sala como vazia',
+    ]);
+  }
+  if (lower.contains('portal')) {
+    return fmt('Portal Dimensional', [
+      'Efeito: teleporta a salas aleatórias da mesma masmorra',
+      'Impacto: dificulta mapeamento',
+    ]);
+  }
+  if (lower.contains('spray') ||
+      lower.contains('ácido') ||
+      lower.contains('acido')) {
+    return fmt('Spray Ácido', [
+      'Alcance: até 6 m da armadilha',
+      'Dano: 1d4 ácido',
+    ]);
+  }
+  if (lower.contains('teto') &&
+      (lower.contains('retr') || lower.contains('desce'))) {
+    return fmt('Teto Retrátil', [
+      'Efeito: teto desce até esmagar todos na sala',
+      'Contramedida: Desarmar Armadilhas por um Ladrão em até 1d8 turnos',
+    ]);
+  }
+
+  // fallback genérico
+  return trapText;
+}
 
 // A5.4: Cômodos da Masmorra (2d6)
 const Map<RoomContext, Map<int, String>> _roomTypes = {
